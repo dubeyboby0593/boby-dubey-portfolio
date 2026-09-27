@@ -27,11 +27,35 @@
     localStorage.setItem('bd-theme', t);
     if (window.__cyberScene) window.__cyberScene.refreshColors();
   }
+  function cycleTheme() { themeIdx = (themeIdx + 1) % THEMES.length; applyTheme(); flashThemeToast(); }
   applyTheme();
-  $('#theme-switch')?.addEventListener('click', () => {
-    themeIdx = (themeIdx + 1) % THEMES.length;
-    applyTheme();
-  });
+  $('#theme-switch')?.addEventListener('click', cycleTheme);
+
+  // Double-tap / double-click ANYWHERE cycles theme (+ recolors ribbon strokes).
+  // Ignores taps on links, buttons, and form fields so it never hijacks a real action.
+  let lastTap = 0;
+  function isInteractive(el) { return el && el.closest && el.closest('a,button,input,textarea,label,#nav-menu'); }
+  function onQuickTap(e) {
+    if (isInteractive(e.target)) { lastTap = 0; return; }
+    const now = e.timeStamp || performance.now();
+    if (now - lastTap < 340) { cycleTheme(); lastTap = 0; }
+    else lastTap = now;
+  }
+  window.addEventListener('pointerup', onQuickTap, { passive: true });
+
+  // Tiny toast so the theme change reads as intentional
+  let toastEl = null, toastTimer = 0;
+  function flashThemeToast() {
+    if (!toastEl) {
+      toastEl = document.createElement('div');
+      toastEl.id = 'theme-toast';
+      document.body.appendChild(toastEl);
+    }
+    toastEl.textContent = 'THEME // ' + THEME_LABELS[THEMES[themeIdx]];
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 900);
+  }
 
   function accentHex() {
     return getComputedStyle(document.body).getPropertyValue('--accent').trim() || '#4cd137';
@@ -52,9 +76,12 @@
     '> loading modules: soc, soar, ai_sec [ OK ]',
     '> establishing encrypted channel ... [ OK ]',
     '> threat_feed: ONLINE',
-    '> render: 3D_ORGANISM',
+    '> render: telemetry_field [ OK ]',
     '> welcome, operator._',
   ];
+
+  const bootEnter = $('#boot-enter');
+  let gateReady = false;
 
   function finishBoot() {
     if (!bootScreen || bootScreen.classList.contains('done')) return;
@@ -63,17 +90,27 @@
     startRoleTyper();
   }
 
+  function armGate() {
+    // reveal the "click to enter" cue; site enters on any click/key
+    gateReady = true;
+    if (bootEnter) bootEnter.classList.remove('hidden');
+    const enter = () => finishBoot();
+    bootScreen?.addEventListener('click', enter);
+    bootScreen?.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); enter(); } });
+    bootScreen?.focus?.();
+  }
+
   function runBoot() {
     if (!bootScreen || !bootLog) { startRoleTyper(); return; }
     if (prefersReduced) {
       bootLog.textContent = bootLines.join('\n');
       if (bootFill) bootFill.style.width = '100%';
-      setTimeout(finishBoot, 400);
+      armGate();
       return;
     }
     let li = 0, ci = 0;
     (function type() {
-      if (li >= bootLines.length) { if (bootFill) bootFill.style.width = '100%'; setTimeout(finishBoot, 500); return; }
+      if (li >= bootLines.length) { if (bootFill) bootFill.style.width = '100%'; setTimeout(armGate, 300); return; }
       const line = bootLines[li];
       bootLog.textContent = bootLines.slice(0, li).join('\n') + (li ? '\n' : '') + line.slice(0, ci);
       if (bootFill) bootFill.style.width = ((li + ci / line.length) / bootLines.length * 100).toFixed(1) + '%';
@@ -82,9 +119,8 @@
       else setTimeout(type, 14 + Math.random() * 22);
     })();
   }
-  $('#boot-skip')?.addEventListener('click', finishBoot);
-  // Safety: never trap the user behind the boot screen
-  setTimeout(finishBoot, 6000);
+  // Safety: arm the gate even if typing stalls for any reason
+  setTimeout(() => { if (!gateReady) armGate(); }, 6000);
   runBoot();
 
   /* ============================================================
@@ -173,6 +209,69 @@
   } else if (feedList) {
     feedList.innerHTML = '<li><b>#1042</b> anomaly → triaged</li><li><b>#1043</b> phishing → contained</li>';
   }
+
+  /* ============================================================
+     OPERATIONS CAROUSEL — drag + swipe + buttons + dots
+     ============================================================ */
+  (function carousel() {
+    const track = $('#car-track');
+    if (!track) return;
+    const cards = $$('.op-card', track);
+    const prev = $('#car-prev'), next = $('#car-next'), dotsWrap = $('#car-dots');
+
+    // build dots
+    cards.forEach((_, i) => {
+      const d = document.createElement('i');
+      d.addEventListener('click', () => scrollToCard(i));
+      dotsWrap?.appendChild(d);
+    });
+    const dots = dotsWrap ? $$('i', dotsWrap) : [];
+
+    function cardStep() {
+      if (cards.length < 2) return cards[0]?.offsetWidth || 320;
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    }
+    function current() { return Math.round(track.scrollLeft / cardStep()); }
+    function scrollToCard(i) {
+      const idx = Math.max(0, Math.min(cards.length - 1, i));
+      track.scrollTo({ left: idx * cardStep(), behavior: 'smooth' });
+    }
+    function syncUI() {
+      const c = current();
+      dots.forEach((d, i) => d.classList.toggle('on', i === c));
+      if (prev) prev.disabled = track.scrollLeft <= 4;
+      if (next) next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 4;
+    }
+    prev?.addEventListener('click', () => scrollToCard(current() - 1));
+    next?.addEventListener('click', () => scrollToCard(current() + 1));
+    track.addEventListener('scroll', syncUI, { passive: true });
+
+    // pointer drag-to-scroll (desktop)
+    let down = false, startX = 0, startScroll = 0, moved = false;
+    track.addEventListener('pointerdown', (e) => {
+      down = true; moved = false; startX = e.clientX; startScroll = track.scrollLeft;
+      track.classList.add('dragging');
+    });
+    track.addEventListener('pointermove', (e) => {
+      if (!down) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved = true;
+      track.scrollLeft = startScroll - dx;
+    });
+    function endDrag() {
+      if (!down) return;
+      down = false; track.classList.remove('dragging');
+      scrollToCard(current()); // snap to nearest
+    }
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+    track.addEventListener('pointerleave', endDrag);
+    // prevent a drag from triggering the card link / double-tap theme
+    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+    window.addEventListener('resize', syncUI, { passive: true });
+    syncUI();
+  })();
 
   /* ============================================================
      MOBILE NAV
@@ -287,31 +386,53 @@
       ctx.globalCompositeOperation = 'lighter'; // additive glow
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-      // draw tapered ribbon as stacked segments (fades + narrows to tail)
+      // PASS 1 — wide soft colored aura (the "pool" / bloom body)
       for (let i = 0; i < N - 1; i++) {
         const p = i / (N - 1);
-        const w = Math.max(0.4, baseW * (1 - p));
-        const alpha = (1 - p) * 0.5;
+        const w = Math.max(0.6, baseW * (1 - p) * 1.8);
+        const alpha = (1 - p) * 0.28;
         const r = Math.round(a1[0] + (a2[0]-a1[0]) * p);
         const g = Math.round(a1[1] + (a2[1]-a1[1]) * p);
         const b = Math.round(a1[2] + (a2[2]-a1[2]) * p);
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
         ctx.shadowColor = `rgba(${r},${g},${b},${alpha})`;
-        ctx.shadowBlur = 12 * (1 - p);
+        ctx.shadowBlur = 22 * (1 - p);
         ctx.lineWidth = w;
-        ctx.beginPath();
-        ctx.moveTo(spine[i].x, spine[i].y);
-        ctx.lineTo(spine[i+1].x, spine[i+1].y);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
       }
 
-      // bright head "packet" that blooms when slow (pooling)
-      const bloom = 3 + Math.max(0, (6 - vel)) * 1.4;
-      ctx.shadowBlur = 22; ctx.shadowColor = `rgba(${a1[0]},${a1[1]},${a1[2]},.9)`;
-      ctx.fillStyle = `rgba(${a1[0]},${a1[1]},${a1[2]},.9)`;
-      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom, 0, Math.PI * 2); ctx.fill();
+      // PASS 2 — crisp mid colored strand
+      for (let i = 0; i < N - 1; i++) {
+        const p = i / (N - 1);
+        const w = Math.max(0.4, baseW * (1 - p));
+        const alpha = (1 - p) * 0.55;
+        const r = Math.round(a1[0] + (a2[0]-a1[0]) * p);
+        const g = Math.round(a1[1] + (a2[1]-a1[1]) * p);
+        const b = Math.round(a1[2] + (a2[2]-a1[2]) * p);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.shadowBlur = 0; ctx.lineWidth = w;
+        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
+      }
 
+      // PASS 3 — glossy white-hot inner core (the "gloss" highlight)
+      for (let i = 0; i < N - 1; i++) {
+        const p = i / (N - 1);
+        const w = Math.max(0.3, baseW * (1 - p) * 0.4);
+        const alpha = (1 - p) * 0.85;
+        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+        ctx.lineWidth = w;
+        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
+      }
+
+      // head "packet": colored bloom + glossy white core, blooms when slow
+      const bloom = 4 + Math.max(0, (6 - vel)) * 1.8;
+      ctx.shadowBlur = 26; ctx.shadowColor = `rgba(${a1[0]},${a1[1]},${a1[2]},.95)`;
+      ctx.fillStyle = `rgba(${a1[0]},${a1[1]},${a1[2]},.85)`;
+      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom, 0, Math.PI * 2); ctx.fill();
       ctx.shadowBlur = 0;
+      ctx.fillStyle = 'rgba(255,255,255,.95)';
+      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom * 0.42, 0, Math.PI * 2); ctx.fill();
+
       ctx.globalCompositeOperation = 'source-over';
     }
     frame();

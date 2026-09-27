@@ -26,13 +26,14 @@
 </head>
 <body data-theme="hybrid">
 
-  <!-- ══════════════ BOOT SEQUENCE OVERLAY ══════════════ -->
-  <div id="boot-screen" aria-hidden="true">
+  <!-- ══════════════ CINEMATIC INTRO GATE ══════════════ -->
+  <div id="boot-screen" role="button" tabindex="0" aria-label="Enter site">
     <div class="boot-inner">
       <pre id="boot-log"></pre>
       <div class="boot-bar"><span id="boot-bar-fill"></span></div>
-      <button id="boot-skip" type="button">[ SKIP ]</button>
+      <div id="boot-enter" class="hidden">▶ CLICK ANYWHERE TO ENTER</div>
     </div>
+    <p class="boot-hint">double-tap anywhere to switch theme</p>
   </div>
 
   <!-- ══════════════ BACKGROUND LAYERS ══════════════ -->
@@ -214,7 +215,9 @@
         <p class="section-sub">Selected professional builds &amp; open-source work.</p>
       </div>
 
-      <div class="ops-grid">
+      <div class="carousel reveal">
+        <button class="car-btn car-prev" id="car-prev" aria-label="Previous project">‹</button>
+        <div class="car-track" id="car-track">
         <!-- Professional (generic, non-linked / classified) -->
         <article class="op-card spot classified reveal">
           <div class="op-tag">CLASSIFIED</div>
@@ -264,7 +267,10 @@
           <ul class="stack"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
           <a class="op-link" href="https://github.com/dubeyboby0593/Sorting-Visualizer" target="_blank" rel="noopener">./view_repo ↗</a>
         </article>
+        </div>
+        <button class="car-btn car-next" id="car-next" aria-label="Next project">›</button>
       </div>
+      <div class="car-cue" aria-hidden="true"><span id="car-dots"></span><span class="car-hint">‹ swipe · 6 ops · drag ›</span></div>
     </section>
 
     <!-- ══════════════ CERTS ══════════════ -->
