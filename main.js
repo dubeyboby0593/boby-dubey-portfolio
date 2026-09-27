@@ -219,6 +219,103 @@
     pointer.x = e.clientX / window.innerWidth;
     pointer.y = e.clientY / window.innerHeight;
   }, { passive: true });
+
+  /* ============================================================
+     SILK LIGHT-RIBBON cursor trail (fiber-optic packet trace)
+     Velocity-reactive: thins when moving fast, pools + glows when slow.
+     Own 2D canvas layer, additive blending, LERP-smoothed spine.
+     ============================================================ */
+  function initRibbon() {
+    const rc = $('#ribbon-canvas');
+    if (!rc || prefersReduced || !finePointer) { if (rc) rc.style.display = 'none'; return; }
+    const ctx = rc.getContext('2d');
+    let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      rc.width = W * dpr; rc.height = H * dpr;
+      rc.style.width = W + 'px'; rc.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    const N = 26;                 // ribbon spine samples
+    const spine = [];             // {x,y}
+    let mx = W / 2, my = H / 2;    // raw pointer
+    let hx = W / 2, hy = H / 2;    // smoothed head
+    let vel = 0;                  // smoothed speed
+    let lastX = mx, lastY = my;
+    let active = false, idleT = 0;
+
+    for (let i = 0; i < N; i++) spine.push({ x: hx, y: hy });
+
+    window.addEventListener('pointermove', (e) => {
+      mx = e.clientX; my = e.clientY; active = true; idleT = 0;
+    }, { passive: true });
+    window.addEventListener('pointerdown', () => { idleT = 0; active = true; }, { passive: true });
+
+    function hexToRgb(h) {
+      h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c=>c+c).join('');
+      const n = parseInt(h, 16); return [(n>>16)&255, (n>>8)&255, n&255];
+    }
+
+    function frame() {
+      requestAnimationFrame(frame);
+      ctx.clearRect(0, 0, W, H);
+      if (!active) { idleT++; if (idleT > 240) return; }
+
+      // instantaneous speed -> smoothed velocity
+      const dx = mx - lastX, dy = my - lastY;
+      const inst = Math.min(60, Math.hypot(dx, dy));
+      vel += (inst - vel) * 0.15;
+      lastX = mx; lastY = my;
+
+      // smooth head then trail spine toward it (LERP chain = silk)
+      hx += (mx - hx) * 0.35; hy += (my - hy) * 0.35;
+      spine[0].x += (hx - spine[0].x) * 0.5;
+      spine[0].y += (hy - spine[0].y) * 0.5;
+      for (let i = 1; i < N; i++) {
+        spine[i].x += (spine[i-1].x - spine[i].x) * 0.45;
+        spine[i].y += (spine[i-1].y - spine[i].y) * 0.45;
+      }
+
+      // width: pools (thick) when slow, thins when fast
+      const baseW = 13 - Math.min(10, vel * 0.32);
+      const a1 = hexToRgb(accentHex());
+      const a2 = hexToRgb(accent2Hex());
+
+      ctx.globalCompositeOperation = 'lighter'; // additive glow
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+      // draw tapered ribbon as stacked segments (fades + narrows to tail)
+      for (let i = 0; i < N - 1; i++) {
+        const p = i / (N - 1);
+        const w = Math.max(0.4, baseW * (1 - p));
+        const alpha = (1 - p) * 0.5;
+        const r = Math.round(a1[0] + (a2[0]-a1[0]) * p);
+        const g = Math.round(a1[1] + (a2[1]-a1[1]) * p);
+        const b = Math.round(a1[2] + (a2[2]-a1[2]) * p);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.shadowColor = `rgba(${r},${g},${b},${alpha})`;
+        ctx.shadowBlur = 12 * (1 - p);
+        ctx.lineWidth = w;
+        ctx.beginPath();
+        ctx.moveTo(spine[i].x, spine[i].y);
+        ctx.lineTo(spine[i+1].x, spine[i+1].y);
+        ctx.stroke();
+      }
+
+      // bright head "packet" that blooms when slow (pooling)
+      const bloom = 3 + Math.max(0, (6 - vel)) * 1.4;
+      ctx.shadowBlur = 22; ctx.shadowColor = `rgba(${a1[0]},${a1[1]},${a1[2]},.9)`;
+      ctx.fillStyle = `rgba(${a1[0]},${a1[1]},${a1[2]},.9)`;
+      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom, 0, Math.PI * 2); ctx.fill();
+
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    frame();
+  }
   window.addEventListener('deviceorientation', (e) => {
     if (e.gamma == null) return;
     pointer.x = 0.5 + Math.max(-1, Math.min(1, e.gamma / 45)) * 0.5;
@@ -387,6 +484,7 @@
   }
 
   // Three.js is deferred; init after load so THREE is defined
-  if (document.readyState === 'complete') initScene();
-  else window.addEventListener('load', initScene);
+  function boot() { initScene(); initRibbon(); }
+  if (document.readyState === 'complete') boot();
+  else window.addEventListener('load', boot);
 })();
