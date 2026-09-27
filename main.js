@@ -226,85 +226,85 @@
   }, { passive: true });
 
   /* ============================================================
-     THREE.JS — reactive matrix cube + particle network
+     THREE.JS — TELEMETRY WAVE FIELD (oscilloscope / signal stream)
+     Flowing sine lines w/ layered noise. Cursor is a repulsor that
+     warps nearby waves. LERP-smoothed camera parallax + depth.
      Falls back to CSS grid if WebGL/Three unavailable.
      ============================================================ */
   function initScene() {
     const canvas = $('#bg-canvas');
     const fallback = $('#grid-fallback');
-    if (prefersReduced) { if (fallback) fallback.style.zIndex = '-3'; return; }
-    if (typeof THREE === 'undefined' || !canvas) { if (fallback) fallback.style.zIndex = '-3'; return; }
+    if (prefersReduced) { if (fallback) fallback.style.zIndex = '-4'; return; }
+    if (typeof THREE === 'undefined' || !canvas) { if (fallback) fallback.style.zIndex = '-4'; return; }
 
     let renderer;
     try {
       renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
     } catch (err) {
-      if (fallback) fallback.style.zIndex = '-3';
+      if (fallback) fallback.style.zIndex = '-4';
       return;
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.8)); // cap DPR for perf
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 46;
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 0, 60);
 
     const group = new THREE.Group();
+    group.rotation.x = -0.35; // slight tilt -> perspective depth on the field
     scene.add(group);
 
-    // --- central wireframe "matrix cube" (nested boxes) — pushed back, low opacity ---
-    const cube = new THREE.Group();
-    const boxMats = [];
-    [16, 11, 6].forEach((s, i) => {
-      const geo = new THREE.BoxGeometry(s, s, s);
-      const edges = new THREE.EdgesGeometry(geo);
-      const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.12 - i * 0.025 });
-      boxMats.push(mat);
-      const line = new THREE.LineSegments(edges, mat);
-      line.userData.spin = 0.0006 + i * 0.0004;
-      cube.add(line);
-    });
-    cube.position.z = -14; // offset away from the reading column
-    group.add(cube);
+    // --- build N horizontal signal lines across the field ---
+    const LINES = 22;          // number of telemetry traces
+    const SEG = 120;           // points per line (smoothness)
+    const SPAN = 150;          // horizontal world width
+    const GAP = 4.2;           // vertical spacing between lines
+    const lines = [];
+    const lineMats = [];
 
-    // --- particle network sphere — ~65% fewer, dimmer, blurred-soft ---
-    const COUNT = 320;
-    const positions = new Float32Array(COUNT * 3);
-    for (let i = 0; i < COUNT; i++) {
-      const r = 30 + Math.random() * 20; // wider radius -> particles sit toward the edges
-      const th = Math.random() * Math.PI * 2;
-      const ph = Math.acos(2 * Math.random() - 1);
-      positions[i*3]   = r * Math.sin(ph) * Math.cos(th);
-      positions[i*3+1] = r * Math.sin(ph) * Math.sin(th);
-      positions[i*3+2] = r * Math.cos(ph);
-    }
-    const pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const pMat = new THREE.PointsMaterial({ size: 0.28, transparent: true, opacity: 0.4 });
-    const points = new THREE.Points(pGeo, pMat);
-    group.add(points);
-
-    // --- a few orbiting nodes (dim, wide orbit so they stay at the edges) ---
-    const nodes = [];
-    const nodeMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5 });
-    for (let i = 0; i < 4; i++) {
-      const n = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), nodeMat);
-      n.userData = { r: 30 + i * 4, a: Math.random() * Math.PI * 2, sp: 0.002 + i * 0.0008, tilt: Math.random() * Math.PI };
-      group.add(n); nodes.push(n);
+    for (let li = 0; li < LINES; li++) {
+      const pos = new Float32Array(SEG * 3);
+      for (let s = 0; s < SEG; s++) {
+        pos[s*3] = (s / (SEG - 1) - 0.5) * SPAN;
+        pos[s*3+1] = 0;
+        pos[s*3+2] = 0;
+      }
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+      // center lines brighter, edges fade -> keeps focus calm
+      const dist = Math.abs(li - (LINES - 1) / 2) / ((LINES - 1) / 2);
+      const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.10 + (1 - dist) * 0.28 });
+      lineMats.push(mat);
+      const line = new THREE.Line(geo, mat);
+      const baseY = (li - (LINES - 1) / 2) * GAP;
+      line.userData = {
+        baseY,
+        phase: li * 0.5,
+        amp: 1.4 + Math.random() * 1.8,
+        freq: 0.06 + Math.random() * 0.05,
+        speed: 0.5 + Math.random() * 0.5,
+        z: -30 + (1 - dist) * 20, // center lines nearer camera
+      };
+      line.position.z = line.userData.z;
+      group.add(line);
+      lines.push(line);
     }
 
     function refreshColors() {
       const a = new THREE.Color(accentHex());
       const b = new THREE.Color(accent2Hex());
-      boxMats.forEach((m, i) => m.color = (i === 1 ? b : a));
-      pMat.color = a;
-      nodeMat.color = b;
+      lines.forEach((ln, i) => {
+        const dist = Math.abs(i - (LINES - 1) / 2) / ((LINES - 1) / 2);
+        lineMats[i].color = a.clone().lerp(b, dist); // gradient accent->accent2 outward
+      });
     }
     refreshColors();
     window.__cyberScene = { refreshColors };
 
-    // --- interaction / render loop ---
-    let targetRX = 0, targetRY = 0, curRX = 0, curRY = 0;
+    // --- cursor projected into the field plane (LERP-smoothed) ---
+    const cur = { x: 0, y: 0 };        // smoothed pointer in world-ish units
+    const tgt = { x: 0, y: 0 };
     let scrollP = 0;
     window.addEventListener('scroll', () => {
       const max = document.body.scrollHeight - window.innerHeight;
@@ -313,39 +313,50 @@
 
     let running = true;
     const clock = new THREE.Clock();
+
     function render() {
       if (!running) return;
       const t = clock.getElapsedTime();
-      // pointer drives target rotation
-      targetRY = (pointer.x - 0.5) * 1.8;
-      targetRX = (pointer.y - 0.5) * 1.4;
-      curRX += (targetRX - curRX) * 0.05;
-      curRY += (targetRY - curRY) * 0.05;
 
-      group.rotation.x = curRX + scrollP * Math.PI * 0.6;
-      group.rotation.y = curRY + t * 0.08 + scrollP * Math.PI;
+      // smooth cursor target -> world coords (repulsor position)
+      tgt.x = (pointer.x - 0.5) * SPAN;
+      tgt.y = -(pointer.y - 0.5) * (LINES * GAP);
+      cur.x += (tgt.x - cur.x) * 0.06;   // LERP = silky trailing
+      cur.y += (tgt.y - cur.y) * 0.06;
 
-      cube.children.forEach((c) => { c.rotation.x += c.userData.spin; c.rotation.y += c.userData.spin * 1.3; });
-      cube.scale.setScalar(1 + Math.sin(t * 0.8) * 0.04 + scrollP * 0.5);
-      points.rotation.y = -t * 0.03;
+      for (let li = 0; li < LINES; li++) {
+        const ln = lines[li];
+        const ud = ln.userData;
+        const arr = ln.geometry.attributes.position.array;
+        for (let s = 0; s < SEG; s++) {
+          const x = arr[s*3];
+          // layered sine "signal"
+          let y = Math.sin(x * ud.freq + t * ud.speed + ud.phase) * ud.amp
+                + Math.sin(x * ud.freq * 2.3 + t * ud.speed * 1.4) * ud.amp * 0.35;
+          // cursor repulsor: bump the wave near the pointer, smooth falloff
+          const dx = x - cur.x;
+          const dy = ud.baseY - cur.y;
+          const d2 = dx * dx + dy * dy;
+          const infl = Math.exp(-d2 / 320);            // gaussian bump
+          y += infl * 10 * Math.sin(t * 3 + x * 0.1);  // localized ripple
+          arr[s*3+1] = y;
+        }
+        ln.geometry.attributes.position.needsUpdate = true;
+        ln.position.y = ud.baseY;
+      }
 
-      nodes.forEach(n => {
-        n.userData.a += n.userData.sp;
-        const a = n.userData.a, r = n.userData.r, tl = n.userData.tilt;
-        n.position.set(Math.cos(a) * r, Math.sin(a) * r * Math.cos(tl), Math.sin(a) * r * Math.sin(tl));
-      });
-
-      // camera eased toward pointer for parallax depth
-      camera.position.x += (( (pointer.x - 0.5) * 10) - camera.position.x) * 0.04;
+      // group drift + parallax (camera eased toward pointer)
+      group.position.y = Math.sin(t * 0.1) * 1.5 - scrollP * 20;
+      group.rotation.z = (pointer.x - 0.5) * 0.06;
+      camera.position.x += (((pointer.x - 0.5) * 14) - camera.position.x) * 0.04;
       camera.position.y += (((-(pointer.y - 0.5)) * 8) - camera.position.y) * 0.04;
-      camera.lookAt(scene.position);
+      camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
       requestAnimationFrame(render);
     }
     render();
 
-    // pause when tab hidden (save battery)
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) { running = false; }
       else if (!running) { running = true; render(); }
@@ -355,6 +366,23 @@
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+    }, { passive: true });
+  }
+
+  /* ============================================================
+     CURSOR-SPOTLIGHT tracking for .spot cards (--mx / --my)
+     ============================================================ */
+  if (finePointer) {
+    const spots = $$('.spot');
+    window.addEventListener('pointermove', (e) => {
+      for (const el of spots) {
+        const r = el.getBoundingClientRect();
+        if (e.clientX >= r.left - 40 && e.clientX <= r.right + 40 &&
+            e.clientY >= r.top - 40 && e.clientY <= r.bottom + 40) {
+          el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+          el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        }
+      }
     }, { passive: true });
   }
 
