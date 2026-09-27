@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -38,6 +38,7 @@
   <!-- ══════════════ 3D BACKGROUND CANVAS ══════════════ -->
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
   <div id="grid-fallback" aria-hidden="true"></div>
+  <div id="veil" aria-hidden="true"></div>
   <div id="scanlines" aria-hidden="true"></div>
   <div id="cursor-glow" aria-hidden="true"></div>
 
@@ -112,10 +113,27 @@
       </div>
       <div class="about-grid">
         <div class="about-portrait reveal">
-          <picture>
-            <source srcset="bobypic.webp" type="image/webp" />
-            <img src="bobypic.jpg" alt="Boby Dubey" width="320" height="320" loading="lazy" decoding="async" />
-          </picture>
+          <div class="portrait-card id-card">
+            <div class="bar">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <span>operator_id.sys</span>
+            </div>
+            <div class="id-body">
+              <div class="id-avatar" aria-hidden="true">
+                <svg viewBox="0 0 100 100" width="88" height="88" role="img" aria-label="Anonymous operator">
+                  <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
+                  <circle cx="50" cy="38" r="15" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                  <path d="M22 82c4-17 18-24 28-24s24 7 28 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <dl class="id-meta">
+                <div><dt>handle</dt><dd>dubeyboby0593</dd></div>
+                <div><dt>role</dt><dd>security engineer</dd></div>
+                <div><dt>clearance</dt><dd class="cl">SOC // AI-SEC</dd></div>
+                <div><dt>status</dt><dd class="ok">● active</dd></div>
+              </dl>
+            </div>
+          </div>
           <div class="portrait-frame"></div>
         </div>
         <div class="about-body reveal">

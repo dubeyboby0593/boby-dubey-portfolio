@@ -252,25 +252,26 @@
     const group = new THREE.Group();
     scene.add(group);
 
-    // --- central wireframe "matrix cube" (nested boxes) ---
+    // --- central wireframe "matrix cube" (nested boxes) — pushed back, low opacity ---
     const cube = new THREE.Group();
     const boxMats = [];
     [16, 11, 6].forEach((s, i) => {
       const geo = new THREE.BoxGeometry(s, s, s);
       const edges = new THREE.EdgesGeometry(geo);
-      const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.55 - i * 0.12 });
+      const mat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.12 - i * 0.025 });
       boxMats.push(mat);
       const line = new THREE.LineSegments(edges, mat);
       line.userData.spin = 0.0006 + i * 0.0004;
       cube.add(line);
     });
+    cube.position.z = -14; // offset away from the reading column
     group.add(cube);
 
-    // --- particle network sphere ---
-    const COUNT = 900;
+    // --- particle network sphere — ~65% fewer, dimmer, blurred-soft ---
+    const COUNT = 320;
     const positions = new Float32Array(COUNT * 3);
     for (let i = 0; i < COUNT; i++) {
-      const r = 24 + Math.random() * 14;
+      const r = 30 + Math.random() * 20; // wider radius -> particles sit toward the edges
       const th = Math.random() * Math.PI * 2;
       const ph = Math.acos(2 * Math.random() - 1);
       positions[i*3]   = r * Math.sin(ph) * Math.cos(th);
@@ -279,16 +280,16 @@
     }
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const pMat = new THREE.PointsMaterial({ size: 0.35, transparent: true, opacity: 0.8 });
+    const pMat = new THREE.PointsMaterial({ size: 0.28, transparent: true, opacity: 0.4 });
     const points = new THREE.Points(pGeo, pMat);
     group.add(points);
 
-    // --- a few orbiting nodes ---
+    // --- a few orbiting nodes (dim, wide orbit so they stay at the edges) ---
     const nodes = [];
-    const nodeMat = new THREE.MeshBasicMaterial();
-    for (let i = 0; i < 5; i++) {
-      const n = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 12), nodeMat);
-      n.userData = { r: 20 + i * 3, a: Math.random() * Math.PI * 2, sp: 0.002 + i * 0.0008, tilt: Math.random() * Math.PI };
+    const nodeMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+    for (let i = 0; i < 4; i++) {
+      const n = new THREE.Mesh(new THREE.SphereGeometry(0.4, 12, 12), nodeMat);
+      n.userData = { r: 30 + i * 4, a: Math.random() * Math.PI * 2, sp: 0.002 + i * 0.0008, tilt: Math.random() * Math.PI };
       group.add(n); nodes.push(n);
     }
 
