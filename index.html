@@ -34,8 +34,8 @@
   ]
 }
 </script>
-  <script type="module" crossorigin src="/boby-dubey-portfolio/assets/index-6FBiuJJr.js"></script>
-  <link rel="stylesheet" crossorigin href="/boby-dubey-portfolio/assets/index-CTaBZAfv.css">
+  <script type="module" crossorigin src="/boby-dubey-portfolio/assets/index-DG9C6wQ4.js"></script>
+  <link rel="stylesheet" crossorigin href="/boby-dubey-portfolio/assets/index-QDmnF__S.css">
 </head>
 <body class="pre-hero">
 <a class="skip-link" href="#main">Skip to content</a>
@@ -147,7 +147,7 @@
           </div>
           <div class="b-cta-actions">
             <button class="btn btn-primary" id="watch-reel">▶ Watch the 30-sec reel</button>
-            <a class="btn btn-secondary" href="/resume.pdf" download>Résumé</a>
+            <a class="btn btn-secondary" href="./resume.pdf" download="Boby_Dubey_Resume.pdf">Download résumé</a>
             <a class="btn btn-secondary" href="#contact">Contact</a>
           </div>
         </article>
@@ -437,24 +437,100 @@
   <!-- ============ 7. CONTACT ============ -->
   <section id="contact" class="section contact">
     <div class="container contact-inner">
-      <svg class="contact-logo" viewBox="-1 -1 2 2" width="56" height="56" aria-hidden="true" focusable="false">
-        <path d="M 0 -1 L 0.42 -0.8 L 0.82 -0.7 L 0.82 -0.05 L 0.82 0.5 L 0.42 0.82 L 0 1 L -0.42 0.82 L -0.82 0.5 L -0.82 -0.05 L -0.82 -0.7 L -0.42 -0.8 Z" fill="none" stroke="#22E07A" stroke-width="0.07" stroke-linejoin="round" />
-      </svg>
-      <p class="eyebrow reveal">Contact</p>
-      <h2 class="reveal">Have an idea? Let's make it <span class="accent-word underline-swipe">real.</span></h2>
-      <div class="contact-pills reveal">
-        <a class="chip chip-outline" href="mailto:dubeyboby0593@gmail.com">dubeyboby0593@gmail.com</a>
-        <a class="chip chip-outline" href="https://www.linkedin.com/in/boby-dubey" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a class="chip chip-outline" href="https://github.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a class="chip chip-outline" href="https://x.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">X</a>
-      </div>
-      <div class="contact-actions reveal">
-        <button class="btn btn-secondary" id="copy-email" data-email="dubeyboby0593@gmail.com">Copy email</button>
-        <a class="btn btn-primary" href="/resume.pdf" download>Download résumé</a>
+      <header class="contact-heading">
+        <svg class="contact-logo" viewBox="-1 -1 2 2" width="56" height="56" aria-hidden="true" focusable="false">
+          <path d="M 0 -1 L 0.42 -0.8 L 0.82 -0.7 L 0.82 -0.05 L 0.82 0.5 L 0.42 0.82 L 0 1 L -0.42 0.82 L -0.82 0.5 L -0.82 -0.05 L -0.82 -0.7 L -0.42 -0.8 Z" fill="none" stroke="#22E07A" stroke-width="0.07" stroke-linejoin="round" />
+        </svg>
+        <p class="eyebrow reveal">Contact</p>
+        <h2 class="reveal">Have an idea? Let's make it <span class="accent-word underline-swipe">real.</span></h2>
+        <p class="contact-lede reveal">Tell me what you are building or solving. I will receive a ready-to-send email draft with your contact details and message.</p>
+      </header>
+
+      <div class="contact-layout">
+        <picture class="contact-portrait reveal">
+          <source srcset="./boby-casual.webp" type="image/webp" />
+          <img src="./boby-casual.jpg" width="960" height="1152" alt="Casual portrait of Boby Dubey" loading="lazy" decoding="async" />
+        </picture>
+
+        <div class="contact-content reveal">
+          <div class="contact-pills">
+            <a class="chip chip-outline" href="mailto:dubeyboby0593@gmail.com">dubeyboby0593@gmail.com</a>
+            <a class="chip chip-outline" href="https://www.linkedin.com/in/boby-dubey" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a class="chip chip-outline" href="https://github.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a class="chip chip-outline" href="https://x.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">X</a>
+          </div>
+
+          <form id="contact-form" class="contact-form" data-recipient="dubeyboby0593@gmail.com">
+            <div class="contact-form-fields">
+              <div class="form-field">
+                <label for="contact-name">Your name</label>
+                <input id="contact-name" name="name" type="text" autocomplete="name" required placeholder="Jane Doe" />
+              </div>
+              <div class="form-field">
+                <label for="contact-email">Your email</label>
+                <input id="contact-email" name="email" type="email" autocomplete="email" required placeholder="jane@example.com" />
+              </div>
+              <div class="form-field form-field-message">
+                <label for="contact-query">How can I help?</label>
+                <textarea id="contact-query" name="query" rows="7" minlength="12" required placeholder="Tell me about your security, automation, or AI challenge."></textarea>
+              </div>
+            </div>
+            <p class="contact-form-note">Connect opens a pre-addressed draft in your email app. This site does not send or store your message.</p>
+            <div class="contact-form-footer">
+              <button class="btn btn-primary" type="submit">Connect by email ↗</button>
+              <p class="contact-form-status" id="contact-form-status" role="status" aria-live="polite"></p>
+            </div>
+          </form>
+
+          <div class="contact-actions">
+            <button class="btn btn-secondary" id="copy-email" data-email="dubeyboby0593@gmail.com">Copy email</button>
+            <a class="btn btn-secondary" href="./resume.pdf" target="_blank" rel="noopener noreferrer">Preview résumé</a>
+            <a class="btn btn-secondary" href="./resume.pdf" download="Boby_Dubey_Resume.pdf">Download résumé</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 </main>
+
+<!-- ============ LOCAL RESUME FAQ ASSISTANT ============ -->
+<aside class="resume-chat" id="resume-chat" aria-label="Boby's resume FAQ assistant">
+  <button class="resume-chat-launcher" id="resume-chat-launcher" type="button" aria-expanded="false" aria-controls="resume-chat-panel">
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.7 8.2 9.4 9.4 0 0 1-4-.9L3 20l1.2-4.4A8 8 0 1 1 21 11.5Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+    <span>Ask Boby</span>
+  </button>
+
+  <section class="resume-chat-panel" id="resume-chat-panel" role="dialog" aria-modal="false" aria-labelledby="resume-chat-title" hidden>
+    <header class="resume-chat-header">
+      <div class="resume-chat-title-wrap">
+        <span class="resume-chat-presence" aria-hidden="true"></span>
+        <div>
+          <p class="resume-chat-kicker">Ask about Boby</p>
+          <h2 id="resume-chat-title">Résumé FAQ assistant</h2>
+        </div>
+      </div>
+      <button class="resume-chat-close" id="resume-chat-close" type="button" aria-label="Close FAQ assistant">
+        <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="resume-chat-body">
+      <div class="resume-chat-transcript" id="resume-chat-transcript" role="log" aria-live="polite" aria-relevant="additions" aria-label="FAQ conversation"></div>
+      <div class="resume-chat-prompts">
+        <p>Suggested questions</p>
+        <div class="resume-chat-suggestions" id="resume-chat-suggestions" aria-label="Suggested questions"></div>
+      </div>
+      <form class="resume-chat-form" id="resume-chat-form">
+        <label class="visually-hidden" for="resume-chat-input">Ask a question about Boby</label>
+        <input id="resume-chat-input" name="question" type="text" autocomplete="off" placeholder="Ask about skills, projects, or experience…" />
+        <button type="submit" aria-label="Ask question">
+          <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </button>
+      </form>
+      <p class="resume-chat-privacy">Local FAQ · no API · no tracking</p>
+    </div>
+  </section>
+</aside>
 
 <footer class="site-footer">
   <p>© 2026 Boby Dubey</p>
