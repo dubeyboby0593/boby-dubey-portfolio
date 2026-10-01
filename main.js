@@ -87,9 +87,13 @@
   function finishBoot() {
     if (!bootScreen || bootScreen.classList.contains('done')) return;
     bootScreen.classList.add('done');
+    document.body.classList.remove('pre-boot'); // reveal hero as overlay fades
     setTimeout(() => { bootScreen.remove(); }, 650);
     startRoleTyper();
   }
+  // Safety net: if main.js somehow never reaches this point (e.g. a script
+  // error upstream), never leave the page permanently hidden behind pre-boot.
+  setTimeout(() => document.body.classList.remove('pre-boot'), 8000);
 
   function armGate() {
     // reveal the "click to enter" cue; site enters on any click/key
@@ -321,11 +325,13 @@
   }, { passive: true });
 
   /* ============================================================
-     ENTANGLED LIGHT-RIBBON BUNDLE (fiber-optic strands)
-     Many fine filaments advected through a swirling flow field so
-     they loop + entangle; they bundle around a sweeping emitter that
-     follows the cursor (or drifts when idle). Core filament + diffuse
-     glow, per-strand hue variation, live theme recolor via double-tap.
+     BRAIDED LIGHT-RIBBON CABLE
+     ONE shared spine (follows the cursor, or a slow figure-8 sweep
+     when idle) with several filaments twisted around it at offset
+     phases — a classic twisted-rope/DNA-helix 2D projection. This is
+     what actually produces a cohesive, entangled "cable" look, by
+     construction, instead of independent particles that can scatter.
+     Core filament + diffuse glow per strand; live theme recolor.
      ============================================================ */
   function initRibbon() {
     const rc = $('#ribbon-canvas');
@@ -341,103 +347,118 @@
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    const STRANDS = finePointer ? 16 : 9;    // filaments in the bundle (hero element)
-    const LEN = finePointer ? 58 : 34;       // trail samples per filament (long = big sweep)
-    const strands = [];
-    const emit = { x: W * 0.5, y: H * 0.45 }; // emitter the bundle gathers around
-    let mx = W / 2, my = H / 2, active = false;
+    const N = finePointer ? 48 : 34;        // spine samples -> trail length
+    const STRANDS = finePointer ? 6 : 4;    // filaments braided around the spine
+    const spine = [];
+    let hx = W * 0.5, hy = H * 0.42;
+    for (let i = 0; i < N; i++) spine.push({ x: hx, y: hy });
 
-    for (let i = 0; i < STRANDS; i++) {
-      const pts = [];
-      for (let j = 0; j < LEN; j++) pts.push({ x: emit.x, y: emit.y });
-      strands.push({
-        x: emit.x, y: emit.y, pts,
-        hue: i / (STRANDS - 1),              // 0..1 -> accent..accent2
-        sp: 2.3 + Math.random() * 1.6,       // per-strand speed (bigger spread)
-        off: Math.random() * 1000,           // field phase offset -> they diverge & entangle
-        spring: 0.006 + Math.random() * 0.01, // looser spring -> wider, grander loops
+    let mx = hx, my = hy, lastMoveAt = -99999;
+    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; lastMoveAt = performance.now(); }, { passive: true });
+
+    const strandCfg = [];
+    for (let s = 0; s < STRANDS; s++) {
+      strandCfg.push({
+        hue: STRANDS > 1 ? s / (STRANDS - 1) : 0,  // 0..1 -> accent..accent2
+        radius: 5 + s * 1.9,                        // each filament orbits at its own distance
+        phase: (s / STRANDS) * Math.PI * 2,          // evenly spaced around the braid
+        twistSpeed: 0.55 + (s % 3) * 0.18,            // slight shimmer variation
+        dir: s % 2 === 0 ? 1 : -1,                    // alternate winding direction
       });
     }
-
-    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; active = true; }, { passive: true });
 
     function hexToRgb(h) {
       h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c=>c+c).join('');
       const n = parseInt(h, 16); return [(n>>16)&255, (n>>8)&255, n&255];
     }
-    // swirling flow field -> smooth angle at any point (makes paths loop/entangle)
-    function flowAng(x, y, t, off) {
-      const s = 0.0023;
-      return (Math.sin(x*s + t*0.25 + off) + Math.cos(y*s*1.2 - t*0.22) + Math.sin((x-y)*s*0.6 + t*0.18)) * 1.9;
-    }
 
     let running = true, t0 = performance.now();
+    const perp = new Array(N);
+    const path = new Array(N);
+    for (let i = 0; i < N; i++) path[i] = { x: 0, y: 0 };
+
     function frame() {
       if (!running) return;
       requestAnimationFrame(frame);
       const t = (performance.now() - t0) / 1000;
       ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+      // target: follow the pointer, or sweep a gentle figure-8 when idle (no recent input)
+      const idleFor = performance.now() - lastMoveAt;
+      let tx, ty;
+      if (idleFor < 2200) { tx = mx; ty = my; }
+      else {
+        tx = W * 0.5 + Math.sin(t * 0.16) * W * 0.24;
+        ty = H * 0.42 + Math.sin(t * 0.26 + 1.3) * H * 0.16;
+      }
+      hx += (tx - hx) * 0.07; hy += (ty - hy) * 0.07;
+
+      // chain the spine toward the smoothed head (silky trailing)
+      spine[0].x += (hx - spine[0].x) * 0.5;
+      spine[0].y += (hy - spine[0].y) * 0.5;
+      for (let i = 1; i < N; i++) {
+        spine[i].x += (spine[i-1].x - spine[i].x) * 0.42;
+        spine[i].y += (spine[i-1].y - spine[i].y) * 0.42;
+      }
+
+      // perpendicular vector at each spine point (for the braid offset)
+      for (let i = 0; i < N; i++) {
+        const cur = spine[i], ref = spine[Math.max(0, i - 1)];
+        let dx = ref.x - cur.x, dy = ref.y - cur.y;
+        const len = Math.hypot(dx, dy) || 1;
+        perp[i] = { x: -dy / len, y: dx / len };
+      }
 
       const a1 = hexToRgb(accentHex());
       const a2 = hexToRgb(accent2Hex());
 
-      // move emitter: follow cursor when active, else drift along the field (ambient sweep)
-      if (active && finePointer) {
-        emit.x += (mx - emit.x) * 0.045; emit.y += (my - emit.y) * 0.045;
-      } else {
-        const a = flowAng(emit.x, emit.y, t, 0);
-        emit.x += Math.cos(a) * 2.0; emit.y += Math.sin(a) * 2.0;
-        if (emit.x < -60) emit.x = W + 60; if (emit.x > W + 60) emit.x = -60;
-        if (emit.y < -60) emit.y = H + 60; if (emit.y > H + 60) emit.y = -60;
-      }
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-      for (const s of strands) {
-        // advance head: swirling flow + gentle spring toward the emitter (keeps them bundled)
-        const a = flowAng(s.x, s.y, t, s.off);
-        s.x += Math.cos(a) * s.sp + (emit.x - s.x) * s.spring;
-        s.y += Math.sin(a) * s.sp + (emit.y - s.y) * s.spring;
-        s.pts.unshift({ x: s.x, y: s.y });
-        if (s.pts.length > LEN) s.pts.pop();
+      for (const cfg of strandCfg) {
+        const r = Math.round(a1[0] + (a2[0]-a1[0]) * cfg.hue);
+        const g = Math.round(a1[1] + (a2[1]-a1[1]) * cfg.hue);
+        const b = Math.round(a1[2] + (a2[2]-a1[2]) * cfg.hue);
 
-        // strand base color (accent -> accent2 across the bundle = iridescence)
-        const r = Math.round(a1[0] + (a2[0]-a1[0]) * s.hue);
-        const g = Math.round(a1[1] + (a2[1]-a1[1]) * s.hue);
-        const b = Math.round(a1[2] + (a2[2]-a1[2]) * s.hue);
-        const pts = s.pts;
+        // trace this filament's path by offsetting the shared spine perpendicularly
+        for (let i = 0; i < N; i++) {
+          const twist = Math.sin(i * 0.5 * cfg.dir + t * cfg.twistSpeed + cfg.phase);
+          const amt = cfg.radius * (1 - (i / N) * 0.35); // taper slightly toward the tail
+          path[i].x = spine[i].x + perp[i].x * twist * amt;
+          path[i].y = spine[i].y + perp[i].y * twist * amt;
+        }
 
         // PASS 1 — soft diffuse aura (one shadowed whole-path stroke)
-        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
-        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.strokeStyle = `rgba(${r},${g},${b},0.13)`;
-        ctx.shadowColor = `rgba(${r},${g},${b},1)`; ctx.shadowBlur = 24;
-        ctx.lineWidth = 11; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(path[0].x, path[0].y);
+        for (let i = 1; i < N; i++) ctx.lineTo(path[i].x, path[i].y);
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.12)`;
+        ctx.shadowColor = `rgba(${r},${g},${b},1)`; ctx.shadowBlur = 20;
+        ctx.lineWidth = 9; ctx.stroke();
         ctx.shadowBlur = 0;
 
-        // PASS 2 — colored body, tapered + fading to tail (per-segment, no shadow)
-        for (let i = 0; i < pts.length - 1; i++) {
-          const p = i / (pts.length - 1);
-          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - p) * 0.72})`;
-          ctx.lineWidth = Math.max(0.5, 3.6 * (1 - p));
-          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
+        // PASS 2 — colored body, tapered + fading to tail
+        for (let i = 0; i < N - 1; i++) {
+          const p = i / (N - 1);
+          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - p) * 0.75})`;
+          ctx.lineWidth = Math.max(0.5, 3.2 * (1 - p));
+          ctx.beginPath(); ctx.moveTo(path[i].x, path[i].y); ctx.lineTo(path[i+1].x, path[i+1].y); ctx.stroke();
         }
 
         // PASS 3 — white-hot core near the head (gloss)
-        const coreN = Math.min(pts.length - 1, 16);
+        const coreN = Math.min(N - 1, 14);
         for (let i = 0; i < coreN; i++) {
           const p = i / coreN;
           ctx.strokeStyle = `rgba(255,255,255,${(1 - p) * 0.85})`;
-          ctx.lineWidth = Math.max(0.4, 1.7 * (1 - p));
-          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
+          ctx.lineWidth = Math.max(0.4, 1.5 * (1 - p));
+          ctx.beginPath(); ctx.moveTo(path[i].x, path[i].y); ctx.lineTo(path[i+1].x, path[i+1].y); ctx.stroke();
         }
-
-        // head spark
-        ctx.shadowColor = `rgba(${r},${g},${b},1)`; ctx.shadowBlur = 18;
-        ctx.fillStyle = `rgba(255,255,255,0.95)`;
-        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 2.4, 0, Math.PI * 2); ctx.fill();
-        ctx.shadowBlur = 0;
       }
+
+      // single bright head spark where all strands converge
+      ctx.shadowColor = 'rgba(255,255,255,1)'; ctx.shadowBlur = 18;
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, 2.6, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
 
       ctx.globalCompositeOperation = 'source-over';
     }
