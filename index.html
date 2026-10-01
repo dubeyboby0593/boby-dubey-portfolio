@@ -1,332 +1,416 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Boby Dubey // Security Engineer</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Boby Dubey — Security Engineer</title>
+<meta name="description" content="Boby Dubey, Security Engineer. SOC automation, detection & response, and AI/LLM security. 150+ alerts triaged weekly; builds AI-driven investigation tooling for SOC teams." />
+<link rel="canonical" href="https://dubeyboby0593.github.io/boby-dubey-portfolio/" />
+<meta name="theme-color" content="#050605" />
+<link rel="icon" type="image/svg+xml" href="/boby-dubey-portfolio/favicon.svg" />
 
-  <meta name="description" content="Boby Dubey — Security Engineer specializing in Security Operations, SOC automation, and AI/LLM security. Interactive cybersecurity portfolio." />
-  <meta name="author" content="Boby Dubey" />
-  <meta name="theme-color" content="#0a0a0a" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Boby Dubey — Security Engineer" />
+<meta property="og:description" content="SOC automation · Detection & Response · AI/LLM Security." />
+<meta property="og:image" content="https://dubeyboby0593.github.io/boby-dubey-portfolio/og-image.png" />
+<meta property="og:url" content="https://dubeyboby0593.github.io/boby-dubey-portfolio/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Boby Dubey — Security Engineer" />
+<meta name="twitter:description" content="SOC automation · Detection & Response · AI/LLM Security." />
+<meta name="twitter:image" content="https://dubeyboby0593.github.io/boby-dubey-portfolio/og-image.png" />
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Boby Dubey // Security Engineer" />
-  <meta property="og:description" content="Security Operations · SOC Automation · AI/LLM Security. Interactive cyber-console portfolio." />
-  <meta property="og:url" content="https://dubeyboby0593.github.io/boby-dubey-portfolio/" />
-
-  <!-- Inline SVG favicon: neon shield -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v9c0 7 5 11 12 14 7-3 12-7 12-14V7z' fill='none' stroke='%234cd137' stroke-width='2'/%3E%3Cpath d='M11 16l4 4 7-8' fill='none' stroke='%2300e5ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E" />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="style.css" />
-  <noscript><style>#boot-screen{display:none!important}body.pre-boot .hud-bar,body.pre-boot main,body.pre-boot .site-footer{opacity:1!important}</style></noscript>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Boby Dubey",
+  "jobTitle": "Security Engineer",
+  "address": { "@type": "PostalAddress", "addressLocality": "Bengaluru", "addressCountry": "IN" },
+  "email": "mailto:dubeyboby0593@gmail.com",
+  "sameAs": [
+    "https://www.linkedin.com/in/boby-dubey",
+    "https://github.com/dubeyboby0593",
+    "https://x.com/dubeyboby0593"
+  ]
+}
+</script>
+  <script type="module" crossorigin src="/boby-dubey-portfolio/assets/index-DGgYciYj.js"></script>
+  <link rel="stylesheet" crossorigin href="/boby-dubey-portfolio/assets/index-BBTKBTro.css">
 </head>
-<body data-theme="matrix" class="pre-boot">
+<body class="pre-hero">
+<a class="skip-link" href="#main">Skip to content</a>
+<div id="bg-static" aria-hidden="true"></div>
 
-  <!-- ══════════════ CINEMATIC INTRO GATE ══════════════ -->
-  <div id="boot-screen" role="button" tabindex="0" aria-label="Enter site">
-    <div class="boot-inner">
-      <pre id="boot-log"></pre>
-      <div class="boot-bar"><span id="boot-bar-fill"></span></div>
-      <div id="boot-enter" class="hidden">▶ CLICK ANYWHERE TO ENTER</div>
-    </div>
-    <p class="boot-hint">double-tap anywhere to switch theme</p>
+<!-- ============ INTRO LOADER (mounted/torn down by src/intro/loader.ts) ============ -->
+<div id="intro-root"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" aria-label="Primary">
+  <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-sheet" aria-label="Open menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a class="nav-link" href="#home">Home</a>
+    <a class="nav-link" href="#journey">Journey</a>
+    <a class="nav-link" href="#soc">SOC</a>
+    <a class="nav-link" href="#work">Work</a>
+    <a class="nav-link" href="#recognition">Recognition</a>
+    <a class="nav-link" href="#skills">Skills</a>
+    <a class="nav-link" href="#contact">Contact</a>
   </div>
+</nav>
+<div class="nav-sheet" id="nav-sheet">
+  <button class="nav-sheet-close" id="nav-sheet-close" aria-label="Close menu">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+  <a href="#home">Home</a><a href="#journey">Journey</a><a href="#soc">SOC</a>
+  <a href="#work">Work</a><a href="#recognition">Recognition</a><a href="#skills">Skills</a><a href="#contact">Contact</a>
+</div>
 
-  <!-- ══════════════ BACKGROUND LAYERS ══════════════ -->
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
-  <div id="grid-fallback" aria-hidden="true"></div>
-  <div id="veil" aria-hidden="true"></div>
-  <div id="scanlines" aria-hidden="true"></div>
-  <canvas id="ribbon-canvas" aria-hidden="true"></canvas>
-  <div id="cursor-glow" aria-hidden="true"></div>
+<main id="main">
 
-  <!-- ══════════════ NAV / HUD BAR ══════════════ -->
-  <header class="hud-bar">
-    <a href="#hero" class="hud-logo" aria-label="Home">
-      <span class="bracket">[</span>BD<span class="bracket">]</span><span class="blink">_</span>
-    </a>
-    <nav aria-label="Primary">
-      <button class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <ul id="nav-menu">
-        <li><a href="#about"><span class="nav-idx">01</span> about</a></li>
-        <li><a href="#arsenal"><span class="nav-idx">02</span> arsenal</a></li>
-        <li><a href="#ops"><span class="nav-idx">03</span> ops</a></li>
-        <li><a href="#certs"><span class="nav-idx">04</span> certs</a></li>
-        <li><a href="#contact"><span class="nav-idx">05</span> contact</a></li>
-        <li><a class="nav-cta" href="https://drive.google.com/file/d/1Sswq9fln8Yn7xTYZBvXHXl5SQFNLaghG/view?usp=sharing" target="_blank" rel="noopener">resume ↗</a></li>
-      </ul>
-    </nav>
-    <button id="theme-switch" type="button" aria-label="Cycle color theme" title="Cycle theme">
-      <span class="theme-dot"></span><span id="theme-name">HYBRID</span>
-    </button>
-  </header>
-
-  <main>
-    <!-- ══════════════ HERO ══════════════ -->
-    <section id="hero" class="hero">
-      <div class="hero-content reveal">
-        <p class="hero-kicker"><span class="prompt">&gt;</span> initializing secure_profile<span class="blink">_</span></p>
-        <h1 class="glitch" data-text="BOBY DUBEY">BOBY DUBEY</h1>
-        <h2 class="hero-role" id="role-typer"></h2>
-        <p class="hero-desc">
-          I defend enterprise environments from a live Security Operations Center — triaging threats
-          across email, EDR, cloud, network, and identity — and I build AI-driven investigation
-          tooling and automation that make the whole team faster.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#ops">view operations</a>
-          <a class="btn btn-ghost" href="#contact">establish contact</a>
+  <!-- ============ 1. HERO ============ -->
+  <section id="home" class="section hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Security Engineer</p>
+        <h1 id="hero-h1"><span class="type-target">Hi, I'm Boby Dubey</span><span class="accent-word">.</span></h1>
+        <p class="hero-tagline">I build <span class="accent-word">AI-driven security</span> automation for <span class="accent-word">SOC</span> teams.</p>
+        <p class="hero-role">SOC Automation · Detection &amp; Response · AI/LLM Security</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="#work">View my work</a>
+          <a class="btn btn-secondary" href="/resume.pdf" download>Download résumé</a>
+          <button class="btn btn-secondary" id="watch-reel">▶ Watch the 30-sec reel</button>
         </div>
-        <p class="hero-geo" aria-hidden="true">12.9716°N&nbsp;&nbsp;77.5946°E&nbsp;&nbsp;·&nbsp;&nbsp;BENGALURU // IN</p>
       </div>
-
-      <!-- Live SOC-HUD stat panel -->
-      <aside class="hud-panel spot reveal" aria-label="Live status">
-        <div class="hud-panel-head">
-          <span class="dot-row"><i></i><i></i><i></i></span>
-          <span>SOC_STATUS</span>
-          <span class="live-tag">● LIVE</span>
-        </div>
-        <div class="hud-stats">
-          <div class="stat"><span class="stat-num" data-count="200" data-suffix="+">0</span><span class="stat-label">alerts / week triaged</span></div>
-          <div class="stat"><span class="stat-num" data-count="15" data-suffix="+">0</span><span class="stat-label">security tools operated</span></div>
-          <div class="stat"><span class="stat-num" data-count="6" data-suffix="">0</span><span class="stat-label">certifications</span></div>
-          <div class="stat"><span class="stat-num" data-count="24" data-suffix="/7">0</span><span class="stat-label">threat monitoring</span></div>
-        </div>
-        <div class="threat-feed" aria-hidden="true">
-          <div class="threat-feed-head">&gt; live_threat_feed --tail</div>
-          <ul id="threat-feed-list"></ul>
-        </div>
-      </aside>
-
-      <a class="scroll-cue" href="#about" aria-label="Scroll down"><span></span></a>
-    </section>
-
-    <!-- ══════════════ ABOUT ══════════════ -->
-    <section id="about" class="section">
-      <div class="section-head reveal">
-        <span class="section-idx">// 01</span>
-        <h2 class="section-title glitch" data-text="whoami">whoami</h2>
+      <div class="hero-portrait" aria-hidden="true">
+        <div class="hero-ring"></div>
+        <picture>
+          <source srcset="/boby-dubey-portfolio/headshot-480.avif 480w, /boby-dubey-portfolio/headshot-960.avif 960w" type="image/avif" />
+          <source srcset="/boby-dubey-portfolio/headshot-480.webp 480w, /boby-dubey-portfolio/headshot-960.webp 960w" type="image/webp" />
+          <img src="/boby-dubey-portfolio/headshot-480.webp" width="320" height="320" alt="" fetchpriority="high" />
+        </picture>
       </div>
-      <div class="about-grid">
-        <div class="about-portrait reveal">
-          <div class="portrait-card id-card">
-            <div class="bar">
-              <span class="dots"><i></i><i></i><i></i></span>
-              <span>operator_id.sys</span>
+    </div>
+    <a class="scroll-cue" href="#journey" aria-label="Scroll to Journey section"><span></span></a>
+  </section>
+
+  <!-- ============ 2. JOURNEY ============ -->
+  <section id="journey" class="section journey">
+    <div class="container">
+      <p class="eyebrow reveal">My Journey</p>
+      <h2 class="reveal">From the classroom <span class="accent-word">to the SOC.</span></h2>
+      <div class="timeline" id="timeline">
+        <div class="timeline-line"><span class="timeline-fill" id="timeline-fill"></span></div>
+        <ol class="timeline-nodes">
+          <li class="timeline-node reveal">
+            <span class="timeline-dot" aria-hidden="true"></span>
+            <div class="card timeline-card">
+              <p class="timeline-when">2022 – 2026</p>
+              <h3>B.E. Computer Science</h3>
+              <p>Chandigarh University · Specialization in Information Security</p>
+              <span class="chip chip-outline">CGPA 8.48</span>
             </div>
-            <div class="id-body">
-              <div class="id-avatar" aria-hidden="true">
-                <svg viewBox="0 0 100 100" width="88" height="88" role="img" aria-label="Anonymous operator">
-                  <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".5"/>
-                  <circle cx="50" cy="38" r="15" fill="none" stroke="currentColor" stroke-width="2.5"/>
-                  <path d="M22 82c4-17 18-24 28-24s24 7 28 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <dl class="id-meta">
-                <div><dt>handle</dt><dd>dubeyboby0593</dd></div>
-                <div><dt>role</dt><dd>security engineer</dd></div>
-                <div><dt>clearance</dt><dd class="cl">SOC // AI-SEC</dd></div>
-                <div><dt>status</dt><dd class="ok">● active</dd></div>
-              </dl>
+          </li>
+          <li class="timeline-node reveal">
+            <span class="timeline-dot" aria-hidden="true"></span>
+            <div class="card timeline-card">
+              <p class="timeline-when">Jun 2025</p>
+              <h3>Cybersecurity Intern</h3>
+              <p>FICO · Security Operations Center</p>
             </div>
-          </div>
-          <div class="portrait-frame"></div>
+          </li>
+          <li class="timeline-node reveal">
+            <span class="timeline-dot" aria-hidden="true"></span>
+            <div class="card timeline-card">
+              <p class="timeline-when">Jul 2026</p>
+              <h3>Cybersecurity Associate</h3>
+              <p>FICO · Security Operations Center</p>
+              <span class="chip chip-solid">Current role</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3. SOC DAY TO DAY ============ -->
+  <section id="soc" class="section soc">
+    <div class="container soc-grid">
+      <div class="soc-counter reveal">
+        <p class="eyebrow">SOC Day to Day</p>
+        <p class="counter"><span id="soc-count">0</span><span class="accent-word">+</span></p>
+        <p class="counter-label">alerts triaged every week</p>
+        <p class="counter-sub">across six alert sources</p>
+        <ul class="soc-steps" id="soc-steps">
+          <li class="soc-step" data-step="0">Triage</li>
+          <li class="soc-step" data-step="1">Investigate</li>
+          <li class="soc-step" data-step="2">Escalate</li>
+          <li class="soc-step" data-step="3">Contain</li>
+        </ul>
+      </div>
+      <div class="soc-tiles" id="soc-tiles">
+        <div class="soc-tile reveal" data-source="0"><span class="icon-slot" data-icon="mail" data-label="Email"></span><p class="soc-tile-name">Email</p><p class="soc-tile-sub">Phishing</p><span class="ping" aria-hidden="true"></span></div>
+        <div class="soc-tile reveal" data-source="1"><span class="icon-slot" data-icon="edr" data-label="Endpoint"></span><p class="soc-tile-name">Endpoint</p><p class="soc-tile-sub">EDR &amp; malware</p><span class="ping" aria-hidden="true"></span></div>
+        <div class="soc-tile reveal" data-source="2"><span class="icon-slot" data-icon="cloud" data-label="Cloud"></span><p class="soc-tile-name">Cloud</p><p class="soc-tile-sub">Cloud posture</p><span class="ping" aria-hidden="true"></span></div>
+        <div class="soc-tile reveal" data-source="3"><span class="icon-slot" data-icon="waf" data-label="WAF"></span><p class="soc-tile-name">WAF</p><p class="soc-tile-sub">Web attacks</p><span class="ping" aria-hidden="true"></span></div>
+        <div class="soc-tile reveal" data-source="4"><span class="icon-slot" data-icon="net" data-label="Network"></span><p class="soc-tile-name">Network</p><p class="soc-tile-sub">Traffic anomalies</p><span class="ping" aria-hidden="true"></span></div>
+        <div class="soc-tile reveal" data-source="5"><span class="icon-slot" data-icon="id" data-label="Identity"></span><p class="soc-tile-name">Identity</p><p class="soc-tile-sub">Access &amp; privilege</p><span class="ping" aria-hidden="true"></span></div>
+      </div>
+    </div>
+    <div class="container soc-highlights">
+      <h3 class="visually-hidden">SOC highlights</h3>
+      <div class="highlights-grid">
+        <div class="card highlight-card reveal"><h3>Impersonation detections</h3><p>Built Splunk detections and SOAR playbooks for account impersonation.</p></div>
+        <div class="card highlight-card reveal"><h3>Privileged access monitoring</h3><p>Core team member monitoring privileged users for unauthorized actions.</p></div>
+        <div class="card highlight-card reveal"><h3>Root-cause investigation</h3><p>Led the investigation of a NOC-escalated data usage spike with the Incident Response team.</p></div>
+        <div class="card highlight-card reveal"><h3>Account compromise response</h3><p>Took immediate containment actions on a confirmed account compromise.</p></div>
+        <div class="card highlight-card reveal"><h3>Automation</h3><p>Automated repetitive SOC tasks with Playwright scripts.</p></div>
+        <div class="card highlight-card reveal"><h3>AI enablement</h3><p>Set up MCP integrations (Atlassian, ServiceNow, Wiz) and built AI investigation tools used by the SOC.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. WORK ============ -->
+  <section id="work" class="section work">
+    <div class="container">
+      <p class="eyebrow reveal">Selected Work · 4 AI Security Platforms</p>
+      <h2 class="reveal">Work</h2>
+      <div class="work-progress-row" aria-hidden="true">
+        <p class="work-progress" id="work-progress">01 / 04</p>
+        <div class="work-dots" id="work-dots">
+          <span class="work-dot active"></span><span class="work-dot"></span><span class="work-dot"></span><span class="work-dot"></span>
         </div>
-        <div class="about-body reveal">
-          <p>
-            I'm a <span class="hl">Security Engineer</span> working in an enterprise Security
-            Operations Center, where I handle high-volume alert triage, incident response,
-            detection engineering, and threat hunting across email, EDR, cloud, WAF, network,
-            and identity surfaces.
-          </p>
-          <p>
-            My edge is <span class="hl">automation + AI</span>: I build SOAR playbooks, Playwright
-            automations, and multi-agent LLM investigation tools on AWS Bedrock that cut
-            investigation time and raise analysis quality across the team. I focus on
-            <span class="hl">AI/LLM security</span> — LLM red-teaming, prompt-injection defense,
-            and agentic/MCP security.
-          </p>
-          <p>
-            B.E. in Computer Science with an Information Security specialization. When I'm off the
-            console, you'll find me training, learning something new, or doing the occasional bit
-            of public speaking.
-          </p>
-          <ul class="about-tags">
-            <li>Security Operations</li><li>SOC Automation</li><li>AI / LLM Security</li>
-            <li>Detection Engineering</li><li>Incident Response</li><li>Threat Hunting</li>
-          </ul>
-        </div>
       </div>
-    </section>
-
-    <!-- ══════════════ ARSENAL / SKILLS ══════════════ -->
-    <section id="arsenal" class="section">
-      <div class="section-head reveal">
-        <span class="section-idx">// 02</span>
-        <h2 class="section-title glitch" data-text="arsenal">arsenal</h2>
-      </div>
-      <div class="arsenal-grid">
-        <article class="arsenal-card spot reveal">
-          <h3>◈ Security Operations</h3>
-          <ul class="chips">
-            <li>SIEM</li><li>SOAR</li><li>EDR</li><li>Incident Response</li>
-            <li>Threat Hunting</li><li>Detection Engineering</li><li>Phishing Analysis</li>
-            <li>Log Correlation</li>
-          </ul>
-        </article>
-        <article class="arsenal-card spot reveal">
-          <h3>◈ Cloud &amp; AI Security</h3>
-          <ul class="chips">
-            <li>AWS Bedrock</li><li>Guardrails</li><li>ECS Fargate</li><li>Azure</li>
-            <li>LLM Red-Teaming</li><li>Prompt-Injection Defense</li><li>Agentic / MCP Security</li>
-            <li>Zero-Trust</li>
-          </ul>
-        </article>
-        <article class="arsenal-card spot reveal">
-          <h3>◈ Tooling</h3>
-          <ul class="chips">
-            <li>Splunk</li><li>CrowdStrike Falcon</li><li>Defender</li><li>Cortex XDR</li>
-            <li>Wiz</li><li>Qualys</li><li>Okta</li><li>ServiceNow</li><li>Torq</li>
-          </ul>
-        </article>
-        <article class="arsenal-card spot reveal">
-          <h3>◈ Engineering</h3>
-          <ul class="chips">
-            <li>Python</li><li>TypeScript</li><li>JavaScript</li><li>FastAPI</li>
-            <li>Node.js</li><li>React</li><li>PostgreSQL</li><li>Redis</li>
-            <li>Docker</li><li>Linux</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-
-    <!-- ══════════════ OPS / PROJECTS ══════════════ -->
-    <section id="ops" class="section">
-      <div class="section-head reveal">
-        <span class="section-idx">// 03</span>
-        <h2 class="section-title glitch" data-text="operations">operations</h2>
-        <p class="section-sub">Selected professional builds &amp; open-source work.</p>
-      </div>
-
-      <div class="carousel reveal">
-        <button class="car-btn car-prev" id="car-prev" aria-label="Previous project">‹</button>
-        <div class="car-track" id="car-track">
-        <!-- Professional (generic, non-linked / classified) -->
-        <article class="op-card spot classified reveal">
-          <div class="op-tag">CLASSIFIED</div>
+    </div>
+    <div class="work-track" id="work-track">
+      <article class="work-panel" data-index="0">
+        <div class="card work-card">
+          <p class="work-kicker">01 — SECURITY ORCHESTRATION</p>
           <h3>AI-Driven SOAR Platform</h3>
-          <p>Evidence-first SOAR where a multi-agent LLM panel forms verdicts and only trusted actions run automatically — irreversible responses stay human-approved, every decision in a tamper-evident audit trail.</p>
-          <ul class="stack"><li>Python</li><li>FastAPI</li><li>React</li><li>AWS Bedrock</li><li>PostgreSQL</li><li>NATS</li></ul>
-          <span class="op-link locked">🔒 internal</span>
-        </article>
+          <p class="work-line">Evidence-first SOAR where a multi-agent LLM panel forms verdicts and only trusted actions run automatically.</p>
+          <dl class="work-detail">
+            <div><dt>What it does</dt><dd>Keeps irreversible response actions human-approved and records every decision in a tamper-evident audit trail.</dd></div>
+            <div><dt>My role</dt><dd>Backend architecture, deployment and AWS</dd></div>
+            <div><dt>Stack</dt><dd>Python, FastAPI, React, TypeScript, AWS Bedrock, PostgreSQL, NATS, ECS Fargate</dd></div>
+          </dl>
+          <ul class="chip-row">
+            <li class="chip chip-tag">Python</li><li class="chip chip-tag">FastAPI</li><li class="chip chip-tag">AWS Bedrock</li>
+          </ul>
+          <p class="work-internal-note">Internal project · details on request</p>
+        </div>
+        <div class="work-mock"><canvas class="mock-canvas" data-mock="soar" width="640" height="540" aria-hidden="true"></canvas></div>
+      </article>
 
-        <article class="op-card spot classified reveal">
-          <div class="op-tag">CLASSIFIED</div>
-          <h3>LLM Security Red-Team Scanner</h3>
-          <p>Red-team scanner that runs attack campaigns against LLM, agentic, and MCP systems with deterministic verdicts — giving the team repeatable, auditable AI security testing.</p>
-          <ul class="stack"><li>Python</li><li>FastAPI</li><li>Ollama</li><li>MCP</li><li>AWS Bedrock</li><li>Docker</li></ul>
-          <span class="op-link locked">🔒 internal</span>
-        </article>
+      <article class="work-panel" data-index="1">
+        <div class="card work-card">
+          <p class="work-kicker">02 — HACKATHON PLATFORM</p>
+          <h3>SOC Smart Analyzer</h3>
+          <span class="chip chip-amber">2nd Place · FICO Trust Hackathon</span>
+          <p class="work-line">One secure workspace for 6+ AI-assisted SOC tools and a policy knowledge graph.</p>
+          <dl class="work-detail">
+            <div><dt>What it does</dt><dd>Gives analysts one 2FA/RBAC-protected workspace for AI-assisted triage and policy-grounded alert analysis.</dd></div>
+            <div><dt>My role</dt><dd>Hackathon team lead</dd></div>
+            <div><dt>Stack</dt><dd>Python, FastAPI, AWS Bedrock, Redis, SQLite, networkx</dd></div>
+          </dl>
+          <ul class="chip-row">
+            <li class="chip chip-tag">FastAPI</li><li class="chip chip-tag">AWS Bedrock</li><li class="chip chip-tag">Redis</li>
+          </ul>
+          <p class="work-internal-note">Internal project · details on request</p>
+        </div>
+        <div class="work-mock"><canvas class="mock-canvas" data-mock="ssa" width="640" height="540" aria-hidden="true"></canvas></div>
+      </article>
 
-        <article class="op-card spot classified reveal">
-          <div class="op-tag">CLASSIFIED</div>
-          <h3>Attack-Surface &amp; AI Investigation</h3>
-          <p>Attack-surface monitor with a SOAR queue, a read-only AI investigator, and a Sigma hunt workbench — maps threat/vuln feeds to discovered assets and drafts containment plans.</p>
-          <ul class="stack"><li>Node.js</li><li>React</li><li>AWS Bedrock</li><li>DynamoDB</li><li>S3</li><li>KMS</li></ul>
-          <span class="op-link locked">🔒 internal</span>
-        </article>
+      <article class="work-panel" data-index="2">
+        <div class="card work-card">
+          <p class="work-kicker">03 — ATTACK SURFACE</p>
+          <h3>Attack Surface Monitor</h3>
+          <p class="work-line">Attack surface monitor with a SOAR queue, a read-only AI investigator and a Sigma hunt workbench.</p>
+          <dl class="work-detail">
+            <div><dt>What it does</dt><dd>Maps threat and vulnerability feeds to discovered assets and drafts containment plans for analysts.</dd></div>
+            <div><dt>My role</dt><dd>Contributor, mentored team</dd></div>
+            <div><dt>Stack</dt><dd>Node.js, Express, React, AWS Bedrock, ECS Fargate, DynamoDB, S3, KMS</dd></div>
+          </dl>
+          <ul class="chip-row">
+            <li class="chip chip-tag">Node.js</li><li class="chip chip-tag">React</li><li class="chip chip-tag">AWS</li>
+          </ul>
+          <p class="work-internal-note">Internal project · details on request</p>
+        </div>
+        <div class="work-mock"><canvas class="mock-canvas" data-mock="easm" width="640" height="540" aria-hidden="true"></canvas></div>
+      </article>
 
-        <!-- Open source (live public repos) -->
-        <article class="op-card spot reveal">
-          <div class="op-tag open">OPEN SOURCE</div>
+      <article class="work-panel" data-index="3">
+        <div class="card work-card">
+          <p class="work-kicker">04 — AI RED TEAMING</p>
+          <h3>LLM Red-Team Scanner</h3>
+          <p class="work-line">Red-team scanner that runs attack campaigns against LLM, agentic and MCP-based AI systems with deterministic verdicts.</p>
+          <dl class="work-detail">
+            <div><dt>What it does</dt><dd>Gives the team repeatable, auditable security testing of LLM and AI agent systems.</dd></div>
+            <div><dt>My role</dt><dd>Built the MVP; core contributor</dd></div>
+            <div><dt>Stack</dt><dd>Python, FastAPI, React, TypeScript, PostgreSQL, Ollama, MCP, AWS Bedrock, Docker</dd></div>
+          </dl>
+          <ul class="chip-row">
+            <li class="chip chip-tag">FastAPI</li><li class="chip chip-tag">Ollama</li><li class="chip chip-tag">MCP</li>
+          </ul>
+          <p class="work-internal-note">Internal project · details on request</p>
+        </div>
+        <div class="work-mock"><canvas class="mock-canvas" data-mock="llm" width="640" height="540" aria-hidden="true"></canvas></div>
+      </article>
+    </div>
+
+    <div class="container">
+      <h3 class="reveal open-source-heading">Open source</h3>
+      <div class="opensource-grid">
+        <div class="card os-card reveal">
           <h3>Social Tracker</h3>
-          <p>Open-source platform for social-media analysis — track activity and surface trends from a clean, self-hostable dashboard.</p>
-          <ul class="stack"><li>Python</li><li>Flask</li></ul>
-          <a class="op-link" href="https://github.com/dubeyboby0593/Social-Tracker" target="_blank" rel="noopener">./view_repo ↗</a>
-        </article>
-
-        <article class="op-card spot reveal">
-          <div class="op-tag open">OPEN SOURCE</div>
+          <p>Open-source platform for social-media analysis — track activity and surface trends from a self-hostable dashboard.</p>
+          <ul class="chip-row"><li class="chip chip-tag">Python</li><li class="chip chip-tag">Flask</li></ul>
+          <a class="os-link" href="https://github.com/dubeyboby0593/Social-Tracker" target="_blank" rel="noopener noreferrer">View repo ↗</a>
+        </div>
+        <div class="card os-card reveal">
           <h3>Notencrypt</h3>
-          <p>Encrypted notes application with a clean CustomTkinter desktop UI — keep private notes locked behind strong local encryption.</p>
-          <ul class="stack"><li>Python</li><li>CustomTkinter</li><li>Cryptography</li></ul>
-          <a class="op-link" href="https://github.com/dubeyboby0593/Notencrypt" target="_blank" rel="noopener">./view_repo ↗</a>
-        </article>
-
-        <article class="op-card spot reveal">
-          <div class="op-tag open">OPEN SOURCE</div>
+          <p>Encrypted notes app with a CustomTkinter desktop UI — private notes locked behind local encryption.</p>
+          <ul class="chip-row"><li class="chip chip-tag">Python</li><li class="chip chip-tag">CustomTkinter</li><li class="chip chip-tag">Cryptography</li></ul>
+          <a class="os-link" href="https://github.com/dubeyboby0593/Notencrypt" target="_blank" rel="noopener noreferrer">View repo ↗</a>
+        </div>
+        <div class="card os-card reveal">
           <h3>Sorting Visualizer</h3>
-          <p>Interactive visualizer that animates classic sorting algorithms step-by-step — built to make algorithmic thinking tangible.</p>
-          <ul class="stack"><li>JavaScript</li><li>HTML</li><li>CSS</li></ul>
-          <a class="op-link" href="https://github.com/dubeyboby0593/Sorting-Visualizer" target="_blank" rel="noopener">./view_repo ↗</a>
-        </article>
-        </div>
-        <button class="car-btn car-next" id="car-next" aria-label="Next project">›</button>
-      </div>
-      <div class="car-cue" aria-hidden="true"><span id="car-dots"></span><span class="car-hint">‹ swipe · 6 ops · drag ›</span></div>
-    </section>
-
-    <!-- ══════════════ CERTS ══════════════ -->
-    <section id="certs" class="section">
-      <div class="section-head reveal">
-        <span class="section-idx">// 04</span>
-        <h2 class="section-title glitch" data-text="credentials">credentials</h2>
-      </div>
-      <ul class="cert-list">
-        <li class="reveal"><span class="cert-badge">SC-500</span> Microsoft Certified: Cloud &amp; AI Security Engineer Associate</li>
-        <li class="reveal"><span class="cert-badge">SC-200</span> Microsoft Certified: Security Operations Analyst Associate</li>
-        <li class="reveal"><span class="cert-badge">CLLMSP</span> Certified LLM Security Professional — Red Team Leaders</li>
-        <li class="reveal"><span class="cert-badge">CC</span> ISC2 Certified in Cybersecurity</li>
-        <li class="reveal"><span class="cert-badge">TORQ</span> Torq Certified SOC Analyst</li>
-        <li class="reveal"><span class="cert-badge">GOOGLE</span> Google Cybersecurity Professional</li>
-      </ul>
-      <p class="cert-note reveal">🏆 2nd Place — Trust Hackathon · led a 5-member team, recognized by the CISO · delivered an internal bootcamp series on building AI-based security tools.</p>
-    </section>
-
-    <!-- ══════════════ CONTACT ══════════════ -->
-    <section id="contact" class="section">
-      <div class="section-head reveal">
-        <span class="section-idx">// 05</span>
-        <h2 class="section-title glitch" data-text="establish_contact">establish_contact</h2>
-      </div>
-      <div class="contact-wrap reveal">
-        <form id="contactForm" class="contact-form">
-          <label for="cf-name">&gt; name</label>
-          <input type="text" id="cf-name" name="name" autocomplete="name" required />
-          <label for="cf-email">&gt; email</label>
-          <input type="email" id="cf-email" name="email" autocomplete="email" required />
-          <label for="cf-msg">&gt; message</label>
-          <textarea id="cf-msg" name="message" rows="4" required></textarea>
-          <button type="submit" class="btn btn-primary">transmit →</button>
-          <p class="form-note" id="form-note" role="status"></p>
-        </form>
-        <div class="contact-links">
-          <a href="https://www.linkedin.com/in/boby-dubey/" target="_blank" rel="noopener" aria-label="LinkedIn"><span>LINKEDIN</span> /in/boby-dubey</a>
-          <a href="https://github.com/dubeyboby0593" target="_blank" rel="noopener" aria-label="GitHub"><span>GITHUB</span> /dubeyboby0593</a>
-          <a href="https://x.com/dubeyboby0593" target="_blank" rel="noopener" aria-label="X / Twitter"><span>X</span> /dubeyboby0593</a>
-          <a href="mailto:dubeyboby0593@gmail.com" aria-label="Email"><span>MAIL</span> dubeyboby0593@gmail.com</a>
+          <p>Interactive visualizer that animates classic sorting algorithms step by step.</p>
+          <ul class="chip-row"><li class="chip chip-tag">JavaScript</li><li class="chip chip-tag">HTML</li><li class="chip chip-tag">CSS</li></ul>
+          <a class="os-link" href="https://github.com/dubeyboby0593/Sorting-Visualizer" target="_blank" rel="noopener noreferrer">View repo ↗</a>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="site-footer">
-    <span>&copy; <span id="year"></span> Boby Dubey</span>
-    <span class="foot-sep">·</span>
-    <span>built &amp; deployed from the terminal</span>
-    <span class="foot-status">● all systems nominal</span>
-  </footer>
+  <!-- ============ 5. RECOGNITION ============ -->
+  <section id="recognition" class="section recognition">
+    <div class="container recognition-grid">
+      <div class="recognition-achievements">
+        <p class="eyebrow reveal">Recognition</p>
+        <div class="card achievement-card reveal">
+          <span class="icon-slot" data-icon="trophy" data-label="Trophy"></span>
+          <h3>2nd Place · FICO Trust Hackathon</h3>
+          <p>Led the 5-member SOC Smart Analyzer team</p>
+          <span class="chip chip-outline">Recognized by the CISO</span>
+        </div>
+        <div class="card achievement-card reveal">
+          <span class="icon-slot" data-icon="term" data-label="Terminal"></span>
+          <h3>Claude Code Bootcamp</h3>
+          <p>Delivered a bootcamp series to cybersecurity teams on building AI-based security tools</p>
+          <span class="chip chip-outline">Trainer</span>
+        </div>
+      </div>
+      <div class="recognition-certs">
+        <h2 class="reveal"><span class="accent-word">6</span> certifications</h2>
+        <ul class="cert-grid" id="cert-grid">
+          <li class="hex-cert reveal"><span class="hex-code">SC-500</span><span class="hex-org">Microsoft</span><span class="hex-name">Cloud &amp; AI Security Engineer Associate</span></li>
+          <li class="hex-cert reveal"><span class="hex-code">SC-200</span><span class="hex-org">Microsoft</span><span class="hex-name">Security Operations Analyst Associate</span></li>
+          <li class="hex-cert reveal"><span class="hex-code">CLLMSP</span><span class="hex-org">Red Team Leaders</span><span class="hex-name">Certified LLM Security Professional</span></li>
+          <li class="hex-cert reveal"><span class="hex-code">SOC</span><span class="hex-org">Torq</span><span class="hex-name">SOC Analyst</span></li>
+          <li class="hex-cert reveal"><span class="hex-code">CC</span><span class="hex-org">ISC2</span><span class="hex-name">Certified in Cybersecurity</span></li>
+          <li class="hex-cert reveal"><span class="hex-code">G</span><span class="hex-org">Google</span><span class="hex-name">Cybersecurity Professional</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
 
-  <!-- Three.js (deferred; graceful fallback if it fails) -->
-  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script defer src="main.js"></script>
+  <!-- ============ 6. SKILLS ============ -->
+  <section id="skills" class="section skills">
+    <div class="container">
+      <p class="eyebrow reveal">Skills</p>
+      <h2 class="reveal">What I work with</h2>
+      <div class="skills-grid">
+        <div class="card skill-cat reveal">
+          <h3>Security Operations</h3>
+          <ul class="chip-row">
+            <li class="chip chip-tag">SIEM</li><li class="chip chip-tag">SOAR</li><li class="chip chip-tag">EDR</li>
+            <li class="chip chip-tag">Alert Triage</li><li class="chip chip-tag">Incident Response</li><li class="chip chip-tag">Phishing Analysis</li>
+            <li class="chip chip-tag">Privileged Access Monitoring</li><li class="chip chip-tag">Threat Hunting</li>
+            <li class="chip chip-tag">Log Analysis &amp; Correlation</li><li class="chip chip-tag">Root Cause Analysis</li><li class="chip chip-tag">Detection Engineering</li>
+          </ul>
+        </div>
+        <div class="card skill-cat reveal">
+          <h3>Cloud &amp; AI Security</h3>
+          <ul class="chip-row">
+            <li class="chip chip-tag">AWS Bedrock</li><li class="chip chip-tag">Bedrock Guardrails</li><li class="chip chip-tag">ECS Fargate</li>
+            <li class="chip chip-tag">S3</li><li class="chip chip-tag">DynamoDB</li><li class="chip chip-tag">KMS</li><li class="chip chip-tag">CloudWatch</li>
+            <li class="chip chip-tag">Microsoft Azure</li><li class="chip chip-tag">LLM Red Teaming</li><li class="chip chip-tag">Prompt-Injection Defense</li>
+            <li class="chip chip-tag">Agentic/MCP Security</li><li class="chip chip-tag">Zero-Trust Architecture</li>
+          </ul>
+        </div>
+        <div class="card skill-cat reveal">
+          <h3>Tooling</h3>
+          <ul class="chip-row">
+            <li class="chip chip-tag">Splunk</li><li class="chip chip-tag">CrowdStrike Falcon</li><li class="chip chip-tag">Microsoft Defender for Endpoint</li>
+            <li class="chip chip-tag">Cortex XDR</li><li class="chip chip-tag">Wiz</li><li class="chip chip-tag">Qualys</li><li class="chip chip-tag">Okta</li>
+            <li class="chip chip-tag">Zscaler</li><li class="chip chip-tag">Abnormal Security</li><li class="chip chip-tag">Imperva WAF</li>
+            <li class="chip chip-tag">Torq</li><li class="chip chip-tag">ServiceNow</li>
+          </ul>
+        </div>
+        <div class="card skill-cat reveal">
+          <h3>Engineering</h3>
+          <ul class="chip-row">
+            <li class="chip chip-tag">Python</li><li class="chip chip-tag">TypeScript</li><li class="chip chip-tag">JavaScript</li>
+            <li class="chip chip-tag">FastAPI</li><li class="chip chip-tag">Node.js</li><li class="chip chip-tag">React</li>
+            <li class="chip chip-tag">PostgreSQL</li><li class="chip chip-tag">Redis</li><li class="chip chip-tag">SQLite</li>
+            <li class="chip chip-tag">NATS</li><li class="chip chip-tag">Docker</li><li class="chip chip-tag">Playwright</li>
+            <li class="chip chip-tag">Ollama</li><li class="chip chip-tag">Linux</li><li class="chip chip-tag">Git</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="marquee" aria-hidden="true">
+        <div class="marquee-track marquee-ltr">
+          <span class="chip chip-solid">Splunk</span><span class="chip chip-tag">CrowdStrike Falcon</span><span class="chip chip-solid">Microsoft Defender</span><span class="chip chip-tag">Cortex XDR</span><span class="chip chip-solid">Wiz</span><span class="chip chip-tag">Okta</span><span class="chip chip-solid">Torq</span>
+          <span class="chip chip-solid">Splunk</span><span class="chip chip-tag">CrowdStrike Falcon</span><span class="chip chip-solid">Microsoft Defender</span><span class="chip chip-tag">Cortex XDR</span><span class="chip chip-solid">Wiz</span><span class="chip chip-tag">Okta</span><span class="chip chip-solid">Torq</span>
+        </div>
+        <div class="marquee-track marquee-rtl">
+          <span class="chip chip-tag">AWS Bedrock</span><span class="chip chip-solid">ECS Fargate</span><span class="chip chip-tag">Zscaler</span><span class="chip chip-solid">Abnormal Security</span><span class="chip chip-tag">Imperva WAF</span><span class="chip chip-solid">Sigma</span><span class="chip chip-tag">MCP</span>
+          <span class="chip chip-tag">AWS Bedrock</span><span class="chip chip-solid">ECS Fargate</span><span class="chip chip-tag">Zscaler</span><span class="chip chip-solid">Abnormal Security</span><span class="chip chip-tag">Imperva WAF</span><span class="chip chip-solid">Sigma</span><span class="chip chip-tag">MCP</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 7. CONTACT ============ -->
+  <section id="contact" class="section contact">
+    <div class="container contact-inner">
+      <svg class="contact-logo" viewBox="-1 -1 2 2" width="56" height="56" aria-hidden="true" focusable="false">
+        <path d="M 0 -1 L 0.42 -0.8 L 0.82 -0.7 L 0.82 -0.05 L 0.82 0.5 L 0.42 0.82 L 0 1 L -0.42 0.82 L -0.82 0.5 L -0.82 -0.05 L -0.82 -0.7 L -0.42 -0.8 Z" fill="none" stroke="#22E07A" stroke-width="0.07" stroke-linejoin="round" />
+      </svg>
+      <p class="eyebrow reveal">Contact</p>
+      <h2 class="reveal">Have an idea? Let's make it <span class="accent-word underline-swipe">real.</span></h2>
+      <div class="contact-pills reveal">
+        <a class="chip chip-outline" href="mailto:dubeyboby0593@gmail.com">dubeyboby0593@gmail.com</a>
+        <a class="chip chip-outline" href="https://www.linkedin.com/in/boby-dubey" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a class="chip chip-outline" href="https://github.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a class="chip chip-outline" href="https://x.com/dubeyboby0593" target="_blank" rel="noopener noreferrer">X</a>
+      </div>
+      <div class="contact-actions reveal">
+        <button class="btn btn-secondary" id="copy-email" data-email="dubeyboby0593@gmail.com">Copy email</button>
+        <a class="btn btn-primary" href="/resume.pdf" download>Download résumé</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>© 2026 Boby Dubey</p>
+  <p class="footer-note">Built from scratch · no trackers</p>
+</footer>
+
+<!-- ============ REEL MODAL (lazily populated by src/reel/reel.ts) ============ -->
+<dialog id="reel-dialog" class="reel-dialog" aria-label="Portfolio reel">
+  <div class="reel-dialog-inner">
+    <canvas id="reel-canvas" width="1920" height="1080"></canvas>
+    <div class="reel-controls">
+      <button id="reel-replay" class="btn btn-secondary">Replay</button>
+      <button id="reel-mute" class="btn btn-secondary">Mute</button>
+      <button id="reel-close" class="btn btn-primary">Close</button>
+    </div>
+  </div>
+</dialog>
+
 </body>
 </html>
