@@ -320,13 +320,15 @@
   }, { passive: true });
 
   /* ============================================================
-     SILK LIGHT-RIBBON cursor trail (fiber-optic packet trace)
-     Velocity-reactive: thins when moving fast, pools + glows when slow.
-     Own 2D canvas layer, additive blending, LERP-smoothed spine.
+     ENTANGLED LIGHT-RIBBON BUNDLE (fiber-optic strands)
+     Many fine filaments advected through a swirling flow field so
+     they loop + entangle; they bundle around a sweeping emitter that
+     follows the cursor (or drifts when idle). Core filament + diffuse
+     glow, per-strand hue variation, live theme recolor via double-tap.
      ============================================================ */
   function initRibbon() {
     const rc = $('#ribbon-canvas');
-    if (!rc || prefersReduced || !finePointer) { if (rc) rc.style.display = 'none'; return; }
+    if (!rc || prefersReduced) { if (rc) rc.style.display = 'none'; return; }
     const ctx = rc.getContext('2d');
     let W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
     function resize() {
@@ -338,104 +340,110 @@
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    const N = 26;                 // ribbon spine samples
-    const spine = [];             // {x,y}
-    let mx = W / 2, my = H / 2;    // raw pointer
-    let hx = W / 2, hy = H / 2;    // smoothed head
-    let vel = 0;                  // smoothed speed
-    let lastX = mx, lastY = my;
-    let active = false, idleT = 0;
+    const STRANDS = finePointer ? 11 : 7;   // filaments in the bundle
+    const LEN = finePointer ? 36 : 26;       // trail samples per filament
+    const strands = [];
+    const emit = { x: W * 0.6, y: H * 0.4 }; // emitter the bundle gathers around
+    let mx = W / 2, my = H / 2, active = false;
 
-    for (let i = 0; i < N; i++) spine.push({ x: hx, y: hy });
+    for (let i = 0; i < STRANDS; i++) {
+      const pts = [];
+      for (let j = 0; j < LEN; j++) pts.push({ x: emit.x, y: emit.y });
+      strands.push({
+        x: emit.x, y: emit.y, pts,
+        hue: i / (STRANDS - 1),              // 0..1 -> accent..accent2
+        sp: 1.6 + Math.random() * 1.1,       // per-strand speed
+        off: Math.random() * 1000,           // field phase offset -> they diverge & entangle
+        spring: 0.009 + Math.random() * 0.012,
+      });
+    }
 
-    window.addEventListener('pointermove', (e) => {
-      mx = e.clientX; my = e.clientY; active = true; idleT = 0;
-    }, { passive: true });
-    window.addEventListener('pointerdown', () => { idleT = 0; active = true; }, { passive: true });
+    window.addEventListener('pointermove', (e) => { mx = e.clientX; my = e.clientY; active = true; }, { passive: true });
 
     function hexToRgb(h) {
       h = h.replace('#',''); if (h.length === 3) h = h.split('').map(c=>c+c).join('');
       const n = parseInt(h, 16); return [(n>>16)&255, (n>>8)&255, n&255];
     }
+    // swirling flow field -> smooth angle at any point (makes paths loop/entangle)
+    function flowAng(x, y, t, off) {
+      const s = 0.0023;
+      return (Math.sin(x*s + t*0.25 + off) + Math.cos(y*s*1.2 - t*0.22) + Math.sin((x-y)*s*0.6 + t*0.18)) * 1.9;
+    }
 
+    let running = true, t0 = performance.now();
     function frame() {
+      if (!running) return;
       requestAnimationFrame(frame);
+      const t = (performance.now() - t0) / 1000;
       ctx.clearRect(0, 0, W, H);
-      if (!active) { idleT++; if (idleT > 240) return; }
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-      // instantaneous speed -> smoothed velocity
-      const dx = mx - lastX, dy = my - lastY;
-      const inst = Math.min(60, Math.hypot(dx, dy));
-      vel += (inst - vel) * 0.15;
-      lastX = mx; lastY = my;
-
-      // smooth head then trail spine toward it (LERP chain = silk)
-      hx += (mx - hx) * 0.35; hy += (my - hy) * 0.35;
-      spine[0].x += (hx - spine[0].x) * 0.5;
-      spine[0].y += (hy - spine[0].y) * 0.5;
-      for (let i = 1; i < N; i++) {
-        spine[i].x += (spine[i-1].x - spine[i].x) * 0.45;
-        spine[i].y += (spine[i-1].y - spine[i].y) * 0.45;
-      }
-
-      // width: pools (thick) when slow, thins when fast
-      const baseW = 13 - Math.min(10, vel * 0.32);
       const a1 = hexToRgb(accentHex());
       const a2 = hexToRgb(accent2Hex());
 
-      ctx.globalCompositeOperation = 'lighter'; // additive glow
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-      // PASS 1 — wide soft colored aura (the "pool" / bloom body)
-      for (let i = 0; i < N - 1; i++) {
-        const p = i / (N - 1);
-        const w = Math.max(0.6, baseW * (1 - p) * 1.8);
-        const alpha = (1 - p) * 0.28;
-        const r = Math.round(a1[0] + (a2[0]-a1[0]) * p);
-        const g = Math.round(a1[1] + (a2[1]-a1[1]) * p);
-        const b = Math.round(a1[2] + (a2[2]-a1[2]) * p);
-        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
-        ctx.shadowColor = `rgba(${r},${g},${b},${alpha})`;
-        ctx.shadowBlur = 22 * (1 - p);
-        ctx.lineWidth = w;
-        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
+      // move emitter: follow cursor when active, else drift along the field (ambient sweep)
+      if (active && finePointer) {
+        emit.x += (mx - emit.x) * 0.045; emit.y += (my - emit.y) * 0.045;
+      } else {
+        const a = flowAng(emit.x, emit.y, t, 0);
+        emit.x += Math.cos(a) * 1.5; emit.y += Math.sin(a) * 1.5;
+        if (emit.x < -60) emit.x = W + 60; if (emit.x > W + 60) emit.x = -60;
+        if (emit.y < -60) emit.y = H + 60; if (emit.y > H + 60) emit.y = -60;
       }
 
-      // PASS 2 — crisp mid colored strand
-      for (let i = 0; i < N - 1; i++) {
-        const p = i / (N - 1);
-        const w = Math.max(0.4, baseW * (1 - p));
-        const alpha = (1 - p) * 0.55;
-        const r = Math.round(a1[0] + (a2[0]-a1[0]) * p);
-        const g = Math.round(a1[1] + (a2[1]-a1[1]) * p);
-        const b = Math.round(a1[2] + (a2[2]-a1[2]) * p);
-        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
-        ctx.shadowBlur = 0; ctx.lineWidth = w;
-        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
-      }
+      for (const s of strands) {
+        // advance head: swirling flow + gentle spring toward the emitter (keeps them bundled)
+        const a = flowAng(s.x, s.y, t, s.off);
+        s.x += Math.cos(a) * s.sp + (emit.x - s.x) * s.spring;
+        s.y += Math.sin(a) * s.sp + (emit.y - s.y) * s.spring;
+        s.pts.unshift({ x: s.x, y: s.y });
+        if (s.pts.length > LEN) s.pts.pop();
 
-      // PASS 3 — glossy white-hot inner core (the "gloss" highlight)
-      for (let i = 0; i < N - 1; i++) {
-        const p = i / (N - 1);
-        const w = Math.max(0.3, baseW * (1 - p) * 0.4);
-        const alpha = (1 - p) * 0.85;
-        ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
-        ctx.lineWidth = w;
-        ctx.beginPath(); ctx.moveTo(spine[i].x, spine[i].y); ctx.lineTo(spine[i+1].x, spine[i+1].y); ctx.stroke();
-      }
+        // strand base color (accent -> accent2 across the bundle = iridescence)
+        const r = Math.round(a1[0] + (a2[0]-a1[0]) * s.hue);
+        const g = Math.round(a1[1] + (a2[1]-a1[1]) * s.hue);
+        const b = Math.round(a1[2] + (a2[2]-a1[2]) * s.hue);
+        const pts = s.pts;
 
-      // head "packet": colored bloom + glossy white core, blooms when slow
-      const bloom = 4 + Math.max(0, (6 - vel)) * 1.8;
-      ctx.shadowBlur = 26; ctx.shadowColor = `rgba(${a1[0]},${a1[1]},${a1[2]},.95)`;
-      ctx.fillStyle = `rgba(${a1[0]},${a1[1]},${a1[2]},.85)`;
-      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = 'rgba(255,255,255,.95)';
-      ctx.beginPath(); ctx.arc(spine[0].x, spine[0].y, bloom * 0.42, 0, Math.PI * 2); ctx.fill();
+        // PASS 1 — soft diffuse aura (one shadowed whole-path stroke)
+        ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.10)`;
+        ctx.shadowColor = `rgba(${r},${g},${b},0.9)`; ctx.shadowBlur = 16;
+        ctx.lineWidth = 6; ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // PASS 2 — colored body, tapered + fading to tail (per-segment, no shadow)
+        for (let i = 0; i < pts.length - 1; i++) {
+          const p = i / (pts.length - 1);
+          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - p) * 0.6})`;
+          ctx.lineWidth = Math.max(0.4, 2.4 * (1 - p));
+          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
+        }
+
+        // PASS 3 — white-hot core near the head (gloss)
+        for (let i = 0; i < Math.min(pts.length - 1, 10); i++) {
+          const p = i / 10;
+          ctx.strokeStyle = `rgba(255,255,255,${(1 - p) * 0.8})`;
+          ctx.lineWidth = Math.max(0.3, 1.1 * (1 - p));
+          ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
+        }
+
+        // head spark
+        ctx.shadowColor = `rgba(${r},${g},${b},0.95)`; ctx.shadowBlur = 14;
+        ctx.fillStyle = `rgba(255,255,255,0.9)`;
+        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 1.8, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
 
       ctx.globalCompositeOperation = 'source-over';
     }
     frame();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { running = false; }
+      else if (!running) { running = true; frame(); }
+    });
   }
   window.addEventListener('deviceorientation', (e) => {
     if (e.gamma == null) return;
