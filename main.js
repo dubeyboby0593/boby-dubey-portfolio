@@ -7,6 +7,7 @@
   'use strict';
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(pointer: fine)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 
@@ -18,7 +19,7 @@
      ============================================================ */
   const THEMES = ['matrix', 'hybrid', 'cyber'];
   const THEME_LABELS = { matrix: 'MATRIX', hybrid: 'HYBRID', cyber: 'CYBER' };
-  let themeIdx = Math.max(0, THEMES.indexOf(localStorage.getItem('bd-theme') || 'hybrid'));
+  let themeIdx = Math.max(0, THEMES.indexOf(localStorage.getItem('bd-theme') || 'matrix'));
 
   function applyTheme() {
     const t = THEMES[themeIdx];
@@ -110,17 +111,18 @@
     }
     let li = 0, ci = 0;
     (function type() {
-      if (li >= bootLines.length) { if (bootFill) bootFill.style.width = '100%'; setTimeout(armGate, 300); return; }
+      if (li >= bootLines.length) { if (bootFill) bootFill.style.width = '100%'; setTimeout(armGate, 120); return; }
       const line = bootLines[li];
       bootLog.textContent = bootLines.slice(0, li).join('\n') + (li ? '\n' : '') + line.slice(0, ci);
       if (bootFill) bootFill.style.width = ((li + ci / line.length) / bootLines.length * 100).toFixed(1) + '%';
-      ci++;
-      if (ci > line.length) { li++; ci = 0; setTimeout(type, 90); }
-      else setTimeout(type, 14 + Math.random() * 22);
+      ci += 2; // 2 chars per tick -> snappy
+      if (ci > line.length) { li++; ci = 0; setTimeout(type, 28); }
+      else setTimeout(type, 5);
     })();
   }
   // Safety: arm the gate even if typing stalls for any reason
-  setTimeout(() => { if (!gateReady) armGate(); }, 6000);
+  setTimeout(() => { if (!gateReady) armGate(); }, 2600);
+  initRibbon();  // start the ribbon immediately so it glows behind the intro
   runBoot();
 
   /* ============================================================
@@ -305,7 +307,6 @@
      CURSOR GLOW (desktop pointers only)
      ============================================================ */
   const glow = $('#cursor-glow');
-  const finePointer = window.matchMedia('(pointer: fine)').matches;
   const pointer = { x: 0.5, y: 0.5 };
   if (glow && finePointer && !prefersReduced) {
     window.addEventListener('pointermove', (e) => {
@@ -340,10 +341,10 @@
     resize();
     window.addEventListener('resize', resize, { passive: true });
 
-    const STRANDS = finePointer ? 11 : 7;   // filaments in the bundle
-    const LEN = finePointer ? 36 : 26;       // trail samples per filament
+    const STRANDS = finePointer ? 16 : 9;    // filaments in the bundle (hero element)
+    const LEN = finePointer ? 58 : 34;       // trail samples per filament (long = big sweep)
     const strands = [];
-    const emit = { x: W * 0.6, y: H * 0.4 }; // emitter the bundle gathers around
+    const emit = { x: W * 0.5, y: H * 0.45 }; // emitter the bundle gathers around
     let mx = W / 2, my = H / 2, active = false;
 
     for (let i = 0; i < STRANDS; i++) {
@@ -352,9 +353,9 @@
       strands.push({
         x: emit.x, y: emit.y, pts,
         hue: i / (STRANDS - 1),              // 0..1 -> accent..accent2
-        sp: 1.6 + Math.random() * 1.1,       // per-strand speed
+        sp: 2.3 + Math.random() * 1.6,       // per-strand speed (bigger spread)
         off: Math.random() * 1000,           // field phase offset -> they diverge & entangle
-        spring: 0.009 + Math.random() * 0.012,
+        spring: 0.006 + Math.random() * 0.01, // looser spring -> wider, grander loops
       });
     }
 
@@ -387,7 +388,7 @@
         emit.x += (mx - emit.x) * 0.045; emit.y += (my - emit.y) * 0.045;
       } else {
         const a = flowAng(emit.x, emit.y, t, 0);
-        emit.x += Math.cos(a) * 1.5; emit.y += Math.sin(a) * 1.5;
+        emit.x += Math.cos(a) * 2.0; emit.y += Math.sin(a) * 2.0;
         if (emit.x < -60) emit.x = W + 60; if (emit.x > W + 60) emit.x = -60;
         if (emit.y < -60) emit.y = H + 60; if (emit.y > H + 60) emit.y = -60;
       }
@@ -409,31 +410,32 @@
         // PASS 1 — soft diffuse aura (one shadowed whole-path stroke)
         ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
         for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-        ctx.strokeStyle = `rgba(${r},${g},${b},0.10)`;
-        ctx.shadowColor = `rgba(${r},${g},${b},0.9)`; ctx.shadowBlur = 16;
-        ctx.lineWidth = 6; ctx.stroke();
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.13)`;
+        ctx.shadowColor = `rgba(${r},${g},${b},1)`; ctx.shadowBlur = 24;
+        ctx.lineWidth = 11; ctx.stroke();
         ctx.shadowBlur = 0;
 
         // PASS 2 — colored body, tapered + fading to tail (per-segment, no shadow)
         for (let i = 0; i < pts.length - 1; i++) {
           const p = i / (pts.length - 1);
-          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - p) * 0.6})`;
-          ctx.lineWidth = Math.max(0.4, 2.4 * (1 - p));
+          ctx.strokeStyle = `rgba(${r},${g},${b},${(1 - p) * 0.72})`;
+          ctx.lineWidth = Math.max(0.5, 3.6 * (1 - p));
           ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
         }
 
         // PASS 3 — white-hot core near the head (gloss)
-        for (let i = 0; i < Math.min(pts.length - 1, 10); i++) {
-          const p = i / 10;
-          ctx.strokeStyle = `rgba(255,255,255,${(1 - p) * 0.8})`;
-          ctx.lineWidth = Math.max(0.3, 1.1 * (1 - p));
+        const coreN = Math.min(pts.length - 1, 16);
+        for (let i = 0; i < coreN; i++) {
+          const p = i / coreN;
+          ctx.strokeStyle = `rgba(255,255,255,${(1 - p) * 0.85})`;
+          ctx.lineWidth = Math.max(0.4, 1.7 * (1 - p));
           ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[i+1].x, pts[i+1].y); ctx.stroke();
         }
 
         // head spark
-        ctx.shadowColor = `rgba(${r},${g},${b},0.95)`; ctx.shadowBlur = 14;
-        ctx.fillStyle = `rgba(255,255,255,0.9)`;
-        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 1.8, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowColor = `rgba(${r},${g},${b},1)`; ctx.shadowBlur = 18;
+        ctx.fillStyle = `rgba(255,255,255,0.95)`;
+        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 2.4, 0, Math.PI * 2); ctx.fill();
         ctx.shadowBlur = 0;
       }
 
@@ -612,8 +614,6 @@
     }, { passive: true });
   }
 
-  // Three.js is deferred; init after load so THREE is defined
-  function boot() { initScene(); initRibbon(); }
-  if (document.readyState === 'complete') boot();
-  else window.addEventListener('load', boot);
+  // Wave field removed — the ribbon is the hero and starts in runBoot().
+  // initScene() is kept defined but no longer invoked (clean black background).
 })();
